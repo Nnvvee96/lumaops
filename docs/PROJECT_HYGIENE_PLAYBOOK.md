@@ -24,31 +24,20 @@ Agent contract:
 Develop continuously without turning the machine into a landfill.
 Primary goal: preserve system responsiveness by controlling disk growth, background processes, duplicate assets, stale build outputs, and oversized local artifacts.
 
-This document is based on the current state of `~/Desktop/Projects` as analyzed on April 4, 2026.
+# 2. Workspace Snapshot Pattern
+A periodic snapshot inventory is the entry point for hygiene work. Take one at workspace setup, then at least monthly.
 
-# 2. Current Workspace Snapshot
-Top-level size profile:
-- `NOESIS` -> 4.3G
-- `Remora` -> 391M
-- `Chat-Backups-2026-04-03` -> 274M
-- `Programming - Other` -> 193M
-- `ApplyIQ` -> 56M
-- `getplanora` -> 52M
-- `OHARA-Library` -> 2.4M
+Capture three layers:
 
-Largest confirmed local payloads:
-- `NOESIS/Internal/artifacts/release-validation/.../ggml-medium.bin` -> 1.4G
-- `NOESIS/Internal/tools/noesis-whisper-runner/ggml-large-v3-q5_0.bin` -> 1.0G
-- `NOESIS/Internal/artifacts/release-validation/.../ggml-large-v3-q5_0.bin` -> 1.0G
-- `NOESIS/Internal/tools/noesis-whisper-runner/ggml-medium-q5_0.bin` -> 514M
-- `Remora/remora_app/ios/Pods` -> 349M
-- `Remora/remora_app/.dart_tool` -> 41M
+**Top-level size profile** — `du -sh` per top-level project (see §12.1).
 
-Immediate conclusion:
-- The main pressure is disk usage, not repository metadata.
-- The heaviest waste pattern is duplicated binary/model artifacts.
-- Secondary waste pattern is mobile build dependency material (`Pods`, Flutter tool state).
-- Git repositories themselves are not the main problem here.
+**Largest payloads** — `find -size +100M` across the workspace (see §12.2). The recurring waste classes are: AI model files (`.bin`, `.gguf`, `.ggml*`, `.safetensors`), mobile build dependencies (`Pods`, `.dart_tool`), Rust target dirs, Node `node_modules`, release-validation artefact sinks, chat/screenshot backups.
+
+**Common conclusions** (almost always true in indie / multi-project workspaces):
+- Disk pressure dominates; git metadata is rarely the problem.
+- Heaviest waste pattern is duplicated binary / model artefacts in active repos.
+- Secondary waste pattern is rebuildable native/mobile build state (`Pods`, `.dart_tool`, `target`).
+- Snapshot ≠ rule. Record it in `MEMORY.md` with a date stamp so the next snapshot can compare; do not let a snapshot ossify into "the truth".
 
 # 3. Important Correction: Disk vs. RAM vs. CPU
 Do not mix these together.
@@ -112,50 +101,70 @@ Examples:
 - committed assets actually required by app runtime
 
 # 5. Findings By Project Type
-## 5.1 NOESIS
-Observed:
-- `Internal/artifacts` -> 2.8G
-- `Internal/tools/noesis-whisper-runner` -> 1.5G
-- `Internal/out` -> 19M
-- duplicated GGML model files exist in more than one location
+Generic patterns. Match your project to the closest family; the rule still holds.
+
+## 5.1 Local AI / Model-Bearing Projects (desktop, server, on-device ML)
+Recurring observation:
+- Multi-GB of model files inside the repo (`.bin`, `.gguf`, `.ggml*`, `.safetensors`).
+- Same model often duplicated across `tools/`, `artifacts/`, `out/` paths.
+- `release-validation` / `qa-output` style directories grow without retention dates.
 
 Interpretation:
 - The biggest issue is not code sprawl. It is binary sprawl.
-- `artifacts/release-validation` is a classic sink for one-off validation payloads that stay forever.
+- Validation-artefact sinks become permanent unless retention is explicit.
 - Model files should not live in multiple active directories unless there is a hard runtime requirement.
 
-Required rule for this project family:
-- Keep one canonical local model store outside active repos.
-- Reference it from projects via symlink or env-configured absolute path.
-- Treat `artifacts/release-validation` as disposable unless tied to a current release decision.
-- Never keep the same model both in `tools/...` and in `artifacts/...` without an explicit reason logged.
+Required rule:
+- Keep one canonical local model store outside active repos (`~/DeveloperAssets/models/`).
+- Reference from projects via symlink or env-configured absolute path.
+- Treat validation/QA output directories as disposable unless tied to a current release decision.
+- Never keep the same model in two project paths without an explicit reason logged in MEMORY.md.
 
-## 5.2 Remora
-Observed:
-- `ios/Pods` -> 349M
-- `.dart_tool` -> 41M
-- repo itself is otherwise small
-
-Interpretation:
-- This is normal mobile tooling weight, but it should be treated as disposable build state, not permanent project value.
-
-Required rule for this project family:
-- `Pods` and `.dart_tool` are rebuildable and should be pruned when inactive.
-- Clean these before archiving or after long pauses.
-- Keep them only while actively iterating on iOS/Flutter.
-
-## 5.3 Programming - Other
-Observed:
-- mostly educational/archive content
-- includes large data file `names.csv` at 148M
-- small `__pycache__` remnants exist
+## 5.2 Mobile / Native Projects (iOS / Flutter / React Native)
+Recurring observation:
+- `ios/Pods` weighs hundreds of MB.
+- `.dart_tool`, `android/.gradle`, derived build outputs grow silently.
+- Repo source itself is otherwise small.
 
 Interpretation:
-- This is low-risk clutter, but it accumulates silently.
-- Archive/learning directories need different rules than active products.
+- Normal mobile tooling weight, but it should be treated as disposable build state, not permanent project value.
 
 Required rule:
-- Archived learning material should be compressed, moved out of active `Projects`, or tagged as cold storage.
+- `Pods`, `.dart_tool`, `.gradle`, derived build outputs are rebuildable and should be pruned when the project is inactive.
+- Clean these before archiving or after long pauses.
+- Keep them only while actively iterating.
+- Always keep `Podfile.lock` / `pubspec.lock` / equivalent — they are source of truth, not regenerable.
+
+## 5.3 Web / Node Projects
+Recurring observation:
+- `node_modules` per project (hundreds of MB each).
+- `.next`, `dist`, `build`, `.turbo`, `coverage` accumulate.
+- Multiple lockfile-mismatched copies under monorepo `apps/*` when not using a shared workspace.
+
+Required rule:
+- Prefer workspace tooling (pnpm/yarn workspaces) so `node_modules` is hoisted, not duplicated.
+- Disposable: `.next`, `dist`, `build`, `.turbo`, `coverage`, local test snapshots.
+- Durable: source, `package.json`, lockfile, committed assets required at runtime.
+
+## 5.4 Rust / Tauri Projects
+Recurring observation:
+- `target/` directories at multiple GB per project.
+- `src-tauri/target` + duplicate `target` in workspace root.
+
+Required rule:
+- `target/` is regenerable; safe to delete when inactive.
+- `Cargo.lock` stays unless project policy explicitly allows regeneration.
+- After release-build, materialize step is mandatory (see [[LESSONS_LEARNED.md]] §3.2).
+
+## 5.5 Archive / Learning / Backup Directories
+Recurring observation:
+- Educational / archive content, screenshot backups, chat exports accumulate silently.
+- Single large data files (`*.csv`, `*.zip`) sit unreviewed.
+- `__pycache__` and similar remnants stay forever.
+
+Required rule:
+- Archived learning material gets compressed, moved out of active `~/Desktop/Projects/`, or tagged as cold storage.
+- Backup directories get a quarterly review and a retention date.
 
 # 6. Non-Negotiable Hygiene Rules
 1. No duplicate large binaries inside active repos.
@@ -345,20 +354,28 @@ find ~/Desktop/Projects ~/DeveloperAssets -type f \(
 \) -print
 ```
 
-# 13. Recommended Structural Changes for This Workspace
-Priority 1:
-- Move NOESIS model files to a shared model directory outside the repo.
-- Purge stale content under `NOESIS/Internal/artifacts/release-validation` after deciding what must be retained.
+# 13. Standing Workspace-Level Priorities
+Apply these in order to any multi-project workspace.
 
-Priority 2:
-- Treat `Remora/remora_app/ios/Pods` and `.dart_tool` as disposable working state.
-- Clean them when Remora is idle.
+Priority 1 — Shared heavy-asset store:
+- Establish a single canonical heavy-asset directory outside repos (`~/DeveloperAssets/models/`, `~/DeveloperAssets/datasets/`, `~/DeveloperAssets/releases/`).
+- Migrate any project carrying duplicated AI models / large datasets / built release artefacts to reference the shared store via symlink or env-var path.
 
-Priority 3:
-- Move old chat backups and learning/archive material out of active `Projects` if they are not part of daily work.
+Priority 2 — Validation / QA artefact retention:
+- Any `artifacts/release-validation/`, `qa-output/`, `test-snapshots/` directory needs an explicit retention date or it gets purged on the weekly audit.
+- Untagged content older than two release cycles is disposable.
 
-Priority 4:
-- Standardize all future projects around `tmp/`, `artifacts/current/`, and central shared asset folders.
+Priority 3 — Disposable native build state:
+- Mobile (`Pods`, `.dart_tool`, `.gradle`), Rust (`target`), Node (`node_modules`, `.next`, `dist`) are disposable when their project is idle.
+- Clean them as part of the §8.3 pre-pause routine.
+
+Priority 4 — Archive / backup discipline:
+- Chat backups, screenshot exports, learning material get a quarterly review and a retention date.
+- Cold storage moves outside the active `Projects` tree.
+
+Priority 5 — Greenfield projects:
+- Standardize new projects around the canonical folder contract (§7): `tmp/`, `artifacts/current/`, `artifacts/archive/`, shared asset folders outside the repo.
+- Bootstrap-time decisions are cheap; retrofit hygiene is expensive.
 
 # 14. Agent Prompt Snippet
 Use this instruction at the start or end of implementation tasks:
