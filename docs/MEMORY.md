@@ -37,8 +37,14 @@ The 16-minute morning ritual (CONCEPT §19) is delivered by the Overview being d
 Decision J — Native cohort tracking: **native cohort engine, target Phase 5**.
 Per-product cohort tracker follows leads through Lead → Install → Activation → Retention as a first-class object with identity resolution and event-joining. Why: this is a Killer-Differential vs. PostHog/Plausible for beta launches — surface-only counts cannot answer "did this specific cohort retain?" Scope-heavy, hence Phase 5 rather than MVP.
 
-Decision K — Hosted-phase pricing: **defer until Phase 4 opens**.
-No pricing decision in MVP. Data model and architecture stay neutral so both "pure convenience layer" and "freemium with paid features" remain reachable. Why: deciding now wastes attention; locking in either direction changes how features are gated at a level we can't yet judge.
+Decision K — Hosted-phase pricing: **Pure-Convenience Tier, $7/mo · $60/yr** (updated 2026-05-15).
+OSS stays MIT-licensed, public-repo, feature-identical to the hosted variant — forever. Hosted variant is managed infrastructure only: no premium features, no OSS-gating. Users pay us for Cockpit-as-Service (we host Postgres + cockpit + sync workers + backups), not for additional capability.
+Sequencing:
+- **Phase A** (now → end of `IMPLEMENTATION_PLAN.md` Phase 5): OSS-only. No hosted variant exists. Cost to operate LumaOps: $0/mo.
+- **Phase B** (post-Phase-5): Closed Hosted Beta. 20–50 free invite seats against feedback. Validates that operators actually want managed hosting at this price point.
+- **Phase C** (post-Phase-B validation): Public Hosted launch. $7/mo · $60/yr live via Polar.sh or Lemon Squeezy (final vendor pick in Phase B — see EXPANSION_BACKLOG E-002).
+Why this shape: identical pattern to Plausible / Cal.com / Ghost / WordPress.com. Cookbook-vs-Restaurant model. Self-hostable forever = trust signal; hosted = revenue path without compromising OSS posture. Free-tier stack (Cloudflare Pages + Supabase + Resend + Cloudflare Workers + UptimeRobot) keeps operator cash outlay at $0/mo through Phase A; ~$25/mo at first cliff (≈50–100 paying users).
+The 7th non-negotiable promise (CONCEPT §18.2 #7): "Self-hosted is feature-identical. Always." — the structural lock against future drift toward feature-gated premium tiers.
 
 Decision L — Connector marketplace: **PR-only library in MVP, hosted catalog candidate for Phase 4**.
 Community connectors land as PRs against the open-source repo and ship with the next LumaOps release. Why: zero distribution infrastructure to build; review tempo bottlenecks velocity but that's an OSS-maintainer problem, not a technical one. Hosted catalog reopens in Phase 4 if community volume justifies it.

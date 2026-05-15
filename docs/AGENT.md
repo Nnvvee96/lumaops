@@ -34,6 +34,7 @@ Call nodes on triggers:
 - Hygiene: [[PROJECT_HYGIENE_PLAYBOOK.md]] for artifact lifecycle, cleanup cadence, storage policy, and session-close hygiene gates.
 - Workflow: [[CONCEPT.md]] > [[TDD.md]] > [[IMPLEMENTATION_PLAN.md]] > [[SESSION_LOGS.md]].
 - Compounding: [[LESSONS_LEARNED.md]] for cross-project rules (canonical, generic, accumulating); [[SKILLS_COMPOUNDING.md]] for project-specific failure/success log. Lessons flow: project SKILLS_COMPOUNDING → distill at phase close → promote generic form to LESSONS_LEARNED → seeds the next project's plan.
+- Backlog: [[EXPANSION_BACKLOG.md]] for parked / evaluating / declined items. Check here before acting on a feature request that feels familiar — many proposals are already tracked or already declined here.
 - Recovery: [[RECOVERY_KIT.md]] for restoration.
 
 ## Lessons Routing Triggers
