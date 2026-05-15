@@ -1,9 +1,10 @@
 ---
 system: Atlas Vault OS
-version: 1.0
+version: 1.1
 date: May 15, 2026
 status: ACTIVE / CANONICAL_LEDGER
 scope: cross-project, generic, accumulating
+dependencies: [[AGENT.md]], [[CONSTRAINTS.md]], [[PLAYBOOKS.md]], [[AUDIT.md]], [[SKILLS_COMPOUNDING.md]]
 ---
 # LESSONS_LEARNED.md — Cross-Project Ledger
 
@@ -59,6 +60,11 @@ Each entry has a stable ID (e.g. `§3.2`) so other documents can reference it.
 - **Rule.** Phrase contracts in terms of the raw underlying identity (key codes, byte sequences, IDs), not the visible representation (rendered characters, display labels, localised strings).
 - **Why.** Visible representation varies by locale, layout, font, OS, theme. Contracts written against representation break on every variant the original author didn't see.
 - **Trigger.** Keyboard shortcuts, language-sensitive input, internationalisation, file-system paths, anything that renders differently across environments.
+
+### §1.6 Coverage must match the full domain space, not the first slice
+- **Rule.** When a feature dispatches across a domain (layers, modes, regions, tiers), its first implementation must cover the full domain space — not the two values that happened to be in scope when the feature was specified.
+- **Why.** A dispatcher implemented for "L2 and L3" silently collapses L4–L8 onto L2/L3 when those values arrive later, losing the per-mode metadata. The full lattice is a correctness requirement, not a "nice to have later".
+- **Trigger.** Any new feature with a routing/dispatch decision over an enum or table that already has more values than the first ticket considers.
 
 ---
 
@@ -170,6 +176,11 @@ Each entry has a stable ID (e.g. `§3.2`) so other documents can reference it.
 - **Why.** Polymorphic setters bury the semantic distinction in caller-supplied arguments. The next caller passes the wrong arguments and the bug surfaces in the UI, not at the call site.
 - **Trigger.** Any state-machine method with `Option<>` arguments where some combinations mean fundamentally different operations.
 
+### §6.4 Cancellation is a first-class state, not a feature
+- **Rule.** Every long-running, user-initiated operation must be cancellable. Cancellation is part of the state machine (with its own transient state, its own visible treatment, its own classification path) — not an afterthought wired into one provider.
+- **Why.** A "processing" phase that silently ignores cancel input is a UX bug regardless of how well it succeeds when it succeeds. Once an operation crosses the perceptual-latency threshold (~250ms), the user must be able to abort cleanly without process kill.
+- **Trigger.** Streaming generation, network calls, multi-step pipelines, batch operations, anything that runs longer than perceptual latency from a user-initiated action.
+
 ---
 
 ## §7. Error Handling & Resolution Chains
@@ -193,6 +204,11 @@ Each entry has a stable ID (e.g. `§3.2`) so other documents can reference it.
 - **Rule.** A cross-module signal that is semantically one bit ("user requested cancellation") is physically one bit. Don't introduce per-provider or per-phase flags that view the same intent.
 - **Why.** Multiple views of the same conceptual bit drift. Operators end up with abort that "kind of works on provider A but not on provider B".
 - **Trigger.** Any cross-cutting Boolean (abort, debug, dry-run, maintenance). Multi-provider implementations.
+
+### §7.5 Split layer diagnosis at the symptom, don't assume one fix covers all layers
+- **Rule.** When a user-visible symptom could be produced by any of several stacked layers (input → transform → output), split diagnosis by layer immediately. Do not assume a single fix at one layer corrects the others.
+- **Why.** Most "X is wrong" reports are surface-level; the actual breakage lives at a different layer than where the symptom is visible. Patching the surface masks the real cause and the symptom returns elsewhere.
+- **Trigger.** "Wrong language output", "garbled formatting", "stale data", "duplicate notification" — anything where multiple processing layers could be the root cause.
 
 ---
 
@@ -222,6 +238,11 @@ Each entry has a stable ID (e.g. `§3.2`) so other documents can reference it.
 - **Rule.** When a remote endpoint speaks the same wire protocol as a local endpoint, the code path is identical and the user has no way to see the difference. Make the difference structural (separate code paths, separate types), not "trust the URL".
 - **Why.** URL-only differentiation fails the moment someone copy-pastes a config. Structural differentiation makes mistakes impossible at the type level.
 - **Trigger.** Any local/cloud split where both sides speak the same protocol (Ollama, OpenAI-compatible, etc.).
+
+### §8.6 Runtime endpoints can't depend on operator-only auth flows
+- **Rule.** Any endpoint the installed product hits at runtime must be accessible with the credentials the installed product can carry — not with credentials only the developer/operator has at their desk.
+- **Why.** Private-repo asset URLs, dev-tunnel hostnames, and personal-access-token endpoints work for the operator but 404 for the installed app on a user's machine. The endpoint must be hosted on a path the runtime can actually reach with the credentials it actually has.
+- **Trigger.** Updater feeds, telemetry sinks, license-check endpoints, content-CDN URLs — anything the running product fetches autonomously after install.
 
 ---
 
@@ -276,6 +297,21 @@ Each entry has a stable ID (e.g. `§3.2`) so other documents can reference it.
 - **Why.** Each rule fixes a different parent context. Relying on the local parent's flex defaults works in one place and fails the moment the same primitive lands inside a grid.
 - **Trigger.** A component that looks correct in one place and stretched/squashed in another. Any "content-sized" requirement that has to work in arbitrary parent layouts.
 
+### §10.6 Every classification state needs a matching visible treatment
+- **Rule.** If the system can classify itself into state X, the UI must render a treatment that reads as state X. A backend "cancelled" classification with no visible cancelled treatment is a silent failure regardless of how well the backend behaves.
+- **Why.** The classification is for the operator's benefit. Without a matching visual, the operator can't tell whether their action was acknowledged or whether the system simply got stuck.
+- **Trigger.** Adding a new state to a state machine, adding a new error category, adding a new cycle outcome. Any backend taxonomy whose values surface to a user.
+
+### §10.7 Per-entity flags belong in the entity's edit modal, not a global settings panel
+- **Rule.** When a boolean policy flag applies per-entity (per-role, per-product, per-connector), put the control inside that entity's edit modal — not in a separate global settings panel with an entity dropdown.
+- **Why.** The mental model for "this setting applies to entity X" forms while editing entity X. A separate panel forces context-switching and produces stale "I configured the wrong one" bugs.
+- **Trigger.** Any per-entity opt-in flag. Any settings panel that already requires "choose which entity this applies to" as a first step.
+
+### §10.8 Credentials UX: masked preview + connectivity test, never plaintext
+- **Rule.** Credential management UI shows a masked preview (last 4 chars or fingerprint), never the plaintext. Always offers an explicit, dedicated connectivity-test action that reports pass/fail before the credential is saved as "live".
+- **Why.** Plaintext display leaks credentials to screen-share / over-the-shoulder / screenshots. No connectivity test means the user discovers the credential is broken only when the actual feature fails — far from the configuration moment.
+- **Trigger.** Any auth-token field, API-key field, OAuth scope confirmation. Every connector setup flow.
+
 ---
 
 ## §11. Asset & Platform Conformance
@@ -289,6 +325,11 @@ Each entry has a stable ID (e.g. `§3.2`) so other documents can reference it.
 - **Rule.** Open Graph and Twitter Card image URLs must be absolute (`https://example.com/og.png`), never relative (`og.png`).
 - **Why.** Most scrapers fetch the HTML server-side and don't resolve relative paths against the page URL reliably. WhatsApp in particular is strict. The preview silently fails to render and the user sees an unbranded link.
 - **Trigger.** Any new public page with social sharing. Any time meta tags are copied between projects.
+
+### §11.3 Build-time identity, not runtime env, for installed artefacts
+- **Rule.** An installed/distributed product determines its channel, release, version, and environment identity at **build** time — baked into the artefact — not from runtime environment variables.
+- **Why.** An installed `.app`/`.exe`/container does not inherit the shell environment of the machine that built it. Runtime-env identity works on the developer's machine and fails everywhere else, silently picking a wrong default.
+- **Trigger.** Channel selectors (beta/stable), telemetry endpoints, update feeds, license keys, anything where "which build is this" matters and the answer travels with the artefact.
 
 ---
 
@@ -313,6 +354,11 @@ Each entry has a stable ID (e.g. `§3.2`) so other documents can reference it.
 - **Rule.** Destructive primary actions (factory reset, delete all, force resync) belong on the main runtime control surface — not buried inside a modal that the user reads as "draft / cancel-able".
 - **Why.** Users interpret modal actions as draft actions. Putting destructive runtime actions inside a modal causes accidental destruction when the user thought they were just cancelling.
 - **Trigger.** Any destructive action that affects persisted state. Reset, wipe, disconnect, archive.
+
+### §12.5 Separate work modes get separate boards, not one swimlane view
+- **Rule.** When two streams of work require different cadences and different mental modes (e.g. urgent bug triage vs. weekly feature planning), give them separate boards / surfaces — not one shared view with swimlane separation.
+- **Why.** Mixed modes on one surface cause cognitive bleed: the operator triaging stream A gets pulled out of mode by visible items in stream B. The "single pane of glass" promise hides the cost of constant context-switching.
+- **Trigger.** Any UI proposal that wants to "consolidate" two work streams into one view with type-based filters or swimlanes.
 
 ---
 
@@ -343,9 +389,33 @@ Each entry has a stable ID (e.g. `§3.2`) so other documents can reference it.
 - **Why.** Absolute paths and machine IDs leak environment context that the user did not consent to share. Pasted output containing `/Users/x/...` reveals more than the user expected.
 - **Trigger.** Any data label that survives across surfaces — output text, copy-to-clipboard payloads, exported files, shared screenshots.
 
+### §13.6 Don't expose user-facing controls for capabilities that aren't reliable across variants
+- **Rule.** If a capability (reasoning toggle, advanced feature, experimental mode) behaves differently or fails on some of the variants/models/providers you support, do not expose a single binary control to the user. Either gate by detected capability or keep it internal until the variants converge.
+- **Why.** A control that works in one variant and silently misbehaves in another teaches the user to distrust the entire surface. The user can't reason about "this toggle only applies to half the models", so the toggle becomes a bug factory.
+- **Trigger.** Any feature gate that depends on model / provider / region / plan capability. Beta-stage products with mixed-quality variants.
+
 ---
 
-## §14. Adding new lessons
+## §14. Dependency & Toolchain Discipline
+
+### §14.1 Reserve dependencies for transitive value
+- **Rule.** Adding a third-party dependency to gain a single function is almost always wrong. Inline the function (~40 lines) instead. Reserve dependencies for components with transitive value across many call sites (HTTP client, JSON serializer, runtime, framework).
+- **Why.** Every dependency has compounding cost: lock-file churn, security review, version-bump maintenance, supply-chain risk, build-time impact. A 40-line inline implementation has none of these and stays under your control.
+- **Trigger.** "I'll just add a crate / npm package for fuzzy matching / date formatting / one utility." Stop and write it inline; only escalate to a dependency if the inline version exceeds ~150 lines or needs serious algorithmic work.
+
+### §14.2 Single-source for behaviour configuration
+- **Rule.** When the same behavioural parameter (context window size, timeout, retry count, rate limit) appears in multiple files / call sites, route it through one helper / one config object. Never hardcode the same number in two places.
+- **Why.** Drift between the two hardcoded values produces "fixed in one place, regressed in another" bugs that survive code review because each individual change looks correct.
+- **Trigger.** Any tunable number that already appears in more than one file. Any "make this configurable later" comment.
+
+### §14.3 Local sandbox limits are documented gaps, not blocks
+- **Rule.** When the local environment can't run a verification (compile, test, install, deploy), the slice ships with the gap documented explicitly — including which post-ship checks the operator now owns.
+- **Why.** Letting a slice rot waiting for the sandbox is worse than shipping with a known gap. The operator can run the gap; an unshipped slice helps no one.
+- **Trigger.** Sandboxed agent runs that can't reach the real build pipeline. CI environments missing platform-specific tooling. Anything where the verification machine isn't the deploy machine.
+
+---
+
+## §15. Adding new lessons
 
 When a project surfaces a new lesson worth promoting to this canonical file:
 

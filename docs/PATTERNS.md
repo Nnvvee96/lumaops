@@ -1,10 +1,11 @@
 ---
 system: Atlas Vault OS
-version: 3.4
-date: February 19, 2026
+version: 3.5
+date: May 15, 2026
 status: ACTIVE / PERSISTENT / MASTER
 topology: Sequential-Skill-Graph
 capabilities: [Interrogation, Risk-Mapping, Resource-Arbitrage]
+dependencies: [[AGENT.md]], [[CONSTRAINTS.md]], [[PLAYBOOKS.md]], [[AUDIT.md]], [[LESSONS_LEARNED.md]]
 ---
 # OBJECTIVE: Zero-Error Autonomous Execution
 

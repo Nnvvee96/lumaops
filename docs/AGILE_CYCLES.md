@@ -1,17 +1,16 @@
 ---
 system: Atlas Vault OS
-version: 1.0
+version: 1.1
 date: May 15, 2026
-status: ACTIVE / CYCLES
-project: LumaOps
-dependencies: [[PLAYBOOKS.md]], [[PATTERNS.md]]
+status: TEMPLATE / DYNAMIC
+dependencies: [[AGENT.md]], [[PLAYBOOKS.md]], [[PATTERNS.md]], [[CONSTRAINTS.md]], [[AUDIT.md]], [[LESSONS_LEARNED.md]], [[SKILLS_COMPOUNDING.md]], [[MEMORY.md]]
 ---
-# OBJECTIVE: LumaOps Adaptive Orchestration Cycles
+# OBJECTIVE: Adaptive Orchestration Cycles
 
 ## 1. Cycle Structure
-Cycle: milestone-based loop.
+Cycle: Monthly intent-based loop.
 Phases: Intent > Orchestrate > Execute > Retro > Compound.
-Gate: 85% of the current milestone is hardened before opening a new build thread.
+Gate: 85% value hypothesis met.
 
 ## 2. Intent Phase
 - Define: Natural language spec from CONCEPT.md.
@@ -40,7 +39,7 @@ Gate: 85% of the current milestone is hardened before opening a new build thread
 
 ## 7. Verification Gates
 - Intent Alignment: Matches CONCEPT.md.
-- Outcome: dashboard usefulness and connector trustworthiness cross-referenced.
-- Hardening: typecheck, lint, tests, browser smoke, and hygiene pass once code exists.
+- Outcome: MRR impact cross-referenced.
+- Hardening: Backend checks enforced.
 
 Update Protocol: Supersede phases for new trends.

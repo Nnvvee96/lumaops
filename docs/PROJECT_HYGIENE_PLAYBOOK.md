@@ -1,9 +1,9 @@
 ---
 system: Atlas Vault OS
-version: 1.0
-date: April 4, 2026
+version: 1.1
+date: May 15, 2026
 status: ACTIVE / RESOURCE_HYGIENE / PLAYBOOK
-dependencies: [[AGENT.md]], [[CONSTRAINTS.md]], [[PLAYBOOKS.md]], [[PATTERNS.md]]
+dependencies: [[AGENT.md]], [[CONSTRAINTS.md]], [[PLAYBOOKS.md]], [[PATTERNS.md]], [[AUDIT.md]], [[LESSONS_LEARNED.md]]
 ---
 # PROJECT_HYGIENE_PLAYBOOK.md - Resource Hygiene for Local Development
 
