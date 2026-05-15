@@ -17,7 +17,21 @@ Distribution:
 - No hosted SaaS requirements in the MVP.
 - No desktop shell in the MVP. Tauri remains a Phase 2 wrapper option.
 
-## 2. Application Stack
+## 2a. Marketing Site Stack (`lumaops.app` landing)
+The public landing at `lumaops.app` is a separate concern from the product cockpit. It is intentionally lightweight and decoupled from the application stack.
+
+- Static HTML/CSS, no build step.
+- React 18 + Babel Standalone via CDN (in-browser JSX).
+- Hosted on Cloudflare Pages.
+- Location: `apps/landing/`.
+- Source: handoff from Claude Design.
+
+Rationale:
+- Marketing/product-presence content changes on a different cadence than the cockpit.
+- No reason to drag the product's Next.js build pipeline into a static page.
+- Porting to Next.js becomes an option only once `apps/web` exists and a unified pipeline pays for itself.
+
+## 2b. Application Stack
 Frontend/app:
 - Next.js App Router.
 - React.
