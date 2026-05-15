@@ -1,5 +1,7 @@
 # LumaOps
 
+[![CI](https://github.com/Nnvvee96/lumaops/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Nnvvee96/lumaops/actions/workflows/ci.yml)
+
 Open-source product operations cockpit for indie software.
 
 LumaOps helps founders connect product signals from GitHub, Cloudflare, Stripe, telemetry, support, and custom events into one clean launch dashboard.
@@ -32,4 +34,42 @@ The first proving ground is NOESIS.Tools. The hosted version can come later, but
 
 ## Repository Status
 
-This repository is in architecture/bootstrap phase. See `docs/CONCEPT.md`, `docs/TECHSTACK.md`, and `docs/IMPLEMENTATION_PLAN.md`.
+Phase 0 + Phase 1 closed. Phase 2 in flight — see `docs/IMPLEMENTATION_PLAN.md`.
+
+## Local development
+
+Requires Node 22 and pnpm 10.
+
+```sh
+nvm use                 # picks up .nvmrc
+pnpm install
+pnpm -r typecheck
+pnpm --filter @lumaops/web dev    # cockpit on localhost:3000
+```
+
+## Slice convention
+
+Work ships in sub-slices per `docs/IMPLEMENTATION_PLAN.md`:
+
+- Branch: `slice/S<id>-<kebab-summary>` (e.g. `slice/S2A-monorepo-pnpm`)
+- Commit subject: `[S<id>] <imperative summary>`
+- PR title: `[S<id>] <summary>` — squash-merge to main, branch auto-deleted
+- One slice = one branch = one PR = one squashed commit on main
+
+## CI
+
+Every PR runs typecheck / lint / build / tests / gitleaks. See `.github/workflows/ci.yml`.
+
+## Canonical docs
+
+| File | Role |
+|---|---|
+| `docs/CONCEPT.md` | Strategic blueprint |
+| `docs/TECHSTACK.md` | Technical baseline |
+| `docs/TDD.md` | Locked technical design |
+| `docs/IMPLEMENTATION_PLAN.md` | Phase / sub-slice execution map |
+| `docs/MEMORY.md` | Decision log + edge cases |
+| `docs/SESSION_LOGS.md` | Iterative session chronicle |
+| `docs/SKILLS_COMPOUNDING.md` | Project-specific failure rules |
+| `docs/LESSONS_LEARNED.md` | Cross-project canonical ledger |
+| `docs/AGENT_CONTEXT_PACK.md` | NOESIS-consumable role context |
