@@ -813,53 +813,41 @@ What open source means here:
 - Community users can add connectors, improve the UI, and audit the code.
 - `lumaops.app` can host docs and later a managed version, but it is not required for MVP usage.
 
-Hosted LumaOps can become a real product if the open-source core proves useful.
+### Hosted variant: pure-convenience tier (locked 2026-05-15)
 
-Product phases (public state markers used on landing — fade progressively as phases get further out):
+LumaOps will offer a hosted variant for users who don't want to manage their own infrastructure. The hosted variant is **feature-identical** to the OSS self-hosted build — the only thing we sell is the running of LumaOps on someone else's behalf. (See `MEMORY.md` Decision K for the full reasoning.)
 
-| Phase | Public marker      |
-|-------|--------------------|
-| 1     | shipping now       |
-| 2     | up next            |
-| 3     | planned            |
-| 4     | planned            |
-| 5     | on the horizon     |
+Pricing model: **$7/month or $60/year** via Polar.sh or Lemon Squeezy (vendor pick deferred — `EXPANSION_BACKLOG.md` E-002).
 
-### Phase 1: Internal Control Room
-- Single workspace.
-- NOESIS connected.
-- Manual product config.
-- Dashboard UI.
-- Event schema.
+Cookbook-vs-Restaurant analogy: OSS = the cookbook, hosted = the restaurant. Same recipes, two different ways to consume them.
 
-### Phase 2: Multi-Product Internal
-- Add more internal products.
-- Shared overview.
-- Product comparison.
-- Better integration status.
+### Sequencing — Phase A / B / C
 
-### Phase 3: Connector Framework
-- GitHub connect.
-- Cloudflare connect.
-- Stripe connect.
-- Tracking API.
-- App telemetry endpoint.
+These are launch phases for the **hosted commercial layer**. They run alongside (and after) the engineering phases in `IMPLEMENTATION_PLAN.md`. The OSS product itself is built phase-by-phase per the IMPLEMENTATION_PLAN.
 
-### Phase 4: External Founder Product
-- Onboarding.
-- Workspace/team model.
-- Billing.
-- OAuth marketplace.
-- Template funnels.
-- Public launch reports.
+**Phase A — OSS-only (today through IMPLEMENTATION_PLAN Phase 5).**
+- GitHub repo + self-hostable cockpit only.
+- No hosted variant exists. No pricing on the landing.
+- Marketing focus: GitHub stars, ProductHunt, Show HN, indie-hacker outreach.
+- Operator cash cost: **$0/month** (no infrastructure being run).
+- Goal: discovery + community trust before commercial layer.
 
-### Phase 5: Intelligence Layer
-- Product health score.
-- Launch readiness score.
-- Drop-off diagnosis.
-- Release risk detection.
-- Support spike correlation.
-- "What changed?" explanations.
+**Phase B — Closed Hosted Beta (opens after IMPLEMENTATION_PLAN Phase 5 closes).**
+- 20–50 invite-only free seats on `app.lumaops.app`.
+- Infrastructure live: Cloudflare Pages + Supabase + Cloudflare Workers Cron + Resend + UptimeRobot (see `TECHSTACK.md` §7 Hosted Infrastructure Stack).
+- Payment vendor (Polar.sh vs Lemon Squeezy) chosen here.
+- Goal: validation that operators will pay $7/month for managed hosting.
+- Operator cash cost: **$0–25/month** depending on which free-tier cliffs the beta crosses.
+
+**Phase C — Public Hosted launch (opens after Phase B shows ≥10 conversion-ready beta users).**
+- Pricing page goes live on `lumaops.app`.
+- $7/month and $60/year subscriptions live via the Phase-B-selected payment vendor.
+- Hero copy gains the one-line addendum: "Open source, self-hosted — or hosted for $7/month."
+- Operator cash cost: ~$0 for the first ~50–100 paying users (free tiers absorb it), ~$25–80/month thereafter, ~$200/month at 1000+ users.
+
+### Engineering phases — see IMPLEMENTATION_PLAN.md
+
+The detailed phase-by-phase engineering plan, including all sub-slices and verification gates, lives in `docs/IMPLEMENTATION_PLAN.md`. The seven phases there (Phase 0 Bootstrap → Phase 7 Intelligence Layer) build the product itself. The A/B/C phases above are the commercial-launch overlay.
 
 ## 12. Design Direction
 LumaOps should look like a premium internal operations product.
@@ -1059,7 +1047,7 @@ Decisions resolved in the Phase-1 Spec-Lock pass (2026-05-15) are kept here as h
 - ✅ **Brand-asset upload** — Auto-favicon with manual override. (Decision H)
 - ✅ **Daily-ritual surface** — Implicit via Overview in MVP, explicit Morning-View in Phase 5. (Decision I)
 - ✅ **Native cohort tracking** — Native cohort engine, target Phase 5. (Decision J)
-- ✅ **Hosted-phase pricing** — Defer until Phase 4 opens. (Decision K)
+- ✅ **Hosted-phase pricing** — Pure-Convenience Tier @ $7/mo · $60/yr via Polar.sh or Lemon Squeezy. OSS stays MIT + feature-identical forever. Sequencing: Phase A (OSS-only) → Phase B (Closed Beta) → Phase C (Public). (Decision K, updated 2026-05-15)
 - ✅ **Connector marketplace** — PR-only in MVP, hosted catalog candidate Phase 4. (Decision L)
 
 ### Still open
@@ -1094,6 +1082,7 @@ The six hard claims made on the landing — public-facing, must be defensible by
 4. **Honest data, always.** Stale labelled stale. Inferred labelled inferred. Missing labelled missing.
 5. **Multi-product, first-class.** Every product is a real object — pre-launch, beta, live, active, paused, idea, archived — with its own surface.
 6. **Dense, not loud.** A real cockpit, not a marketing dashboard.
+7. **Self-hosted is feature-identical. Always.** Hosted is convenience — managed infrastructure, nothing more. Features never get OSS-gated. If a hosted user has access to it, every self-hosted user has access to the same code. Locked 2026-05-15 (Decision K) to protect against future drift toward feature-gated premium tiers.
 
 ## 19. The Daily Ritual (UX target)
 LumaOps is not a place you live. It is a place you **visit**. The product should be navigable, scannable, and decisive enough that the operator can complete a full studio check in ~16 minutes a morning.
@@ -1146,5 +1135,6 @@ Captured to prevent scope drift. LumaOps is explicitly **not**:
 - **Not a Notion replacement.** LumaOps has lightweight per-product notes (pending §17 decision on operator-cockpit scope), not a wiki.
 - **Not a marketing CRM.** No email sequencing or lead nurturing.
 - **Not a customer-support product.** LumaOps surfaces tickets; it does not reply to them — unless an explicit decision expands scope to native support (§17).
+- **Not feature-gated against OSS.** The hosted variant has identical features to the OSS self-hosted build. The hosted variant sells managed infrastructure, never extra capability. (Locked 2026-05-15 as Promise #7 in §18.2.)
 
 Any pull toward these adjacencies must go through §17 as an explicit scope decision, not in via feature creep.

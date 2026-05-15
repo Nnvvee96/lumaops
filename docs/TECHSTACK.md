@@ -127,3 +127,48 @@ UI rules:
 - Integration/freshness status visible.
 - No decorative marketing hero in the app.
 - No card-heavy landing-page composition inside the product.
+
+## 7. Hosted Infrastructure Stack (Phase B + C only)
+
+The OSS self-hosted variant runs wherever the user wants — Docker on a laptop, Hetzner, Vercel, anywhere. This section locks the stack **we** run for the hosted variant at `app.lumaops.app` once Phase B opens. (See CONCEPT §11 for Phase A/B/C sequencing and `MEMORY.md` Decision K for the pricing context.)
+
+### 7.1 Design goal: $0 fixed monthly cost during Phase A and the start of Phase B
+
+Every component below has a free tier that covers MVP-scale traffic. Operator cash outlay is $0/month until a cliff is hit (~50–100 paying users). The stack consolidates onto Cloudflare + Supabase + Resend to keep the vendor count low.
+
+### 7.2 Locked components
+
+| Concern | Service | Free tier ceiling | Cliff → next step |
+|---|---|---|---|
+| Cockpit hosting | Cloudflare Pages (Next.js via `@opennextjs/cloudflare`) | unlimited bandwidth, 100k req/day | Workers Paid ($5/mo) at >100k req/day |
+| Database | Supabase Postgres | 500 MB, 1-week idle pause | Pro ($25/mo) for >500 MB or always-on |
+| Auth | Supabase Auth (bundled with DB) | 50k MAU | included in Pro |
+| Object storage (logos, exports) | Supabase Storage (bundled) | 1 GB | included in Pro |
+| Background sync workers | Cloudflare Workers + Cron Triggers | 100k req/day, 5 cron triggers | Workers Paid ($5/mo) |
+| Transactional email | Resend | 3,000/mo, 100/day | Pro ($20/mo) at >3k/mo |
+| Uptime monitoring | UptimeRobot | 50 monitors, 5-min checks | Pro ($7/mo) for 1-min checks |
+| DNS + SSL + CDN | Cloudflare | unlimited | n/a (free) |
+| Payments | Polar.sh **or** Lemon Squeezy (E-002) | n/a | 4–5% + fixed fee per transaction |
+
+### 7.3 Why this specific consolidation
+
+- **Supabase replaces three vendors** (Neon for Postgres, Clerk for Auth, Cloudflare R2 for Storage) → one vendor relationship, one billing surface, one set of credentials, one client SDK.
+- **Cloudflare Pages over Vercel** — Vercel free tier is generous but Cloudflare's free bandwidth is unlimited and the Workers runtime is what we want for the cron sync workers anyway. One ecosystem for compute + edge + DNS + CDN.
+- **Supabase 1-week idle pause** (vs. Neon's 5-min) is acceptable because the cockpit is a daily-use tool. Even an inactive operator visits weekly; pause never fires in normal use.
+- **Polar.sh or Lemon Squeezy as Merchant of Record** handles EU VAT compliance for a German-domiciled founder — `[LL §8.4]` honest-data discipline extended into tax reporting. Final pick deferred to Phase B (`EXPANSION_BACKLOG.md` E-002).
+
+### 7.4 Components flagged for re-evaluation before Phase B
+
+- **Database final pick** — Supabase is the default, but Turso (libSQL, no idle pause, 9 GB free), CockroachDB Serverless (Postgres-wire, 10 GB free, no pause), and Xata (15 GB free) remain on the eval list (`EXPANSION_BACKLOG.md` E-003). Decision when Phase B opens, based on schema-specific behaviour by then.
+- **Payment vendor** — Polar.sh and Lemon Squeezy both viable; pick based on Phase-B feedback (`EXPANSION_BACKLOG.md` E-002).
+- **License** — MIT today; AGPL upgrade is a strategic option if competitive hosting ever materialises (`EXPANSION_BACKLOG.md` E-001).
+
+### 7.5 Unit economics at $7/month
+
+- Per-user marginal cost (variable): ~$0.30/month at scale.
+- Stripe-equivalent processing (via Polar/Lemon Squeezy MoR): ~$0.50–0.70 per $7 transaction (4–5% + fixed fee, all tax handled).
+- Net per user: ~$6.20–6.50/month.
+- Break-even: ~7–8 paying users to cover Phase B/C fixed costs at the first cliff (~$25/month).
+- At 100 paying users: ~$700 gross, ~$60 fixed, ~$30 variable → ~$610/month net.
+
+The hosted variant is a high-margin business once break-even is reached. The early phase (1–7 users) costs the operator ~$25–50/month out of pocket — explicit, bounded, recoverable.

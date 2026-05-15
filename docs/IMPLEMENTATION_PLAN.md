@@ -719,11 +719,26 @@ After merge:
 - One PR = one squashed commit on `main` = `git revert <sha>` undoes the slice cleanly.
 - Destructive operations (DB schema rollback, dropped tables) require an explicit `/REPLAN` and a paired forward+reverse migration.
 
-## 5. References
+## 5. Commercial-Launch Overlay (Hosted Phase A / B / C)
+
+These phases run **alongside and after** the engineering phases above. They're about commercial launch, not engineering. Engineering decisions are locked in §2; the hosted launch is sequenced separately so the engineering plan stays clean.
+
+See `CONCEPT.md` §11 for the full sequencing narrative + `MEMORY.md` Decision K for the pricing decision.
+
+| Phase | Engineering position | Hosted state | Operator cost |
+|---|---|---|---|
+| **A** | now → end of Phase 5 | OSS-only, no hosted variant | $0/month |
+| **B** | post-Phase-5 | Closed Hosted Beta — 20–50 free invite seats on `app.lumaops.app` | $0–25/month |
+| **C** | post-Phase-B validation (≥10 conversion-ready beta users + ≥4 say "I'd pay") | Public Hosted launch — $7/mo · $60/yr | $25/month → scales with revenue |
+
+Detailed step-by-step playbooks for B and C live in `EXPANSION_BACKLOG.md` E-007 (Phase B Launch Plan) and E-008 (Phase C Launch). They are deliberately backlog-tracked rather than promoted into §2 phases until their triggers fire.
+
+## 6. References
 
 - `[[../../MD-Files/MD-Files Templates/LESSONS_LEARNED.md]]` — cross-project ledger; every `[LL §N.M]` reference resolves there.
-- `[[CONCEPT.md]]` — strategic blueprint.
-- `[[TECHSTACK.md]]` — technical baseline (cockpit stack locked in §2b).
+- `[[CONCEPT.md]]` — strategic blueprint (esp. §11 Hosted Direction, §17 Decision K, §18.2 Promise #7, §21 anti-features).
+- `[[TECHSTACK.md]]` — technical baseline (cockpit stack §2b, hosted infrastructure §7).
 - `[[TDD.md]]` — locked spec (data model, adapter interface, freshness, errors, PII).
 - `[[MEMORY.md]]` — Phase-1 decision log (§1.1) and project-specific edge cases.
 - `[[AUDIT.md]]` — `/SHRED` red-team + `/AUDIT` hardening gate procedures.
+- `[[EXPANSION_BACKLOG.md]]` — parked / evaluating / declined items; the strategic backlog.
