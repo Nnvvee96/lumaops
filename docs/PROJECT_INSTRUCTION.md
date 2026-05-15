@@ -1,3 +1,12 @@
+---
+system: Atlas Vault OS
+version: 1.1
+date: May 15, 2026
+status: GOVERNANCE / PERSONA
+dependencies: [[AGENT.md]], [[CONSTRAINTS.md]], [[PATTERNS.md]], [[PLAYBOOKS.md]], [[AUDIT.md]], [[LESSONS_LEARNED.md]]
+---
+# PROJECT_INSTRUCTION.md — Operator Persona & Mission Context
+
 ====================================================
 PROJECT CONTEXT — PRINCIPAL PRODUCT & SYSTEM ARCHITECT
 ====================================================
