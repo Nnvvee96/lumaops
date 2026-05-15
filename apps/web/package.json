@@ -1,0 +1,10 @@
+{
+  "name": "@lumaops/web",
+  "version": "0.0.0",
+  "private": true,
+  "description": "LumaOps cockpit (Next.js App Router). Scaffolded in S2B.",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p ."
+  }
+}
