@@ -2,6 +2,46 @@
 
 const { useEffect: useEffectA, useState: useStateA, useRef: useRefA } = React;
 
+function DevBanner() {
+  return (
+    <div
+      style={{
+        position: "relative",
+        zIndex: 5,
+        borderBottom: "1px solid var(--line)",
+        background: "var(--paper-1)",
+        padding: "10px 20px",
+        textAlign: "center",
+      }}
+    >
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 10,
+          fontFamily: "var(--font-mono)",
+          fontSize: 11,
+          letterSpacing: "0.14em",
+          textTransform: "uppercase",
+          color: "var(--ink-mid)",
+        }}
+      >
+        <span
+          style={{
+            width: 6,
+            height: 6,
+            borderRadius: "50%",
+            background: "var(--lumi)",
+            boxShadow: "0 0 0 3px color-mix(in oklch, var(--lumi) 30%, transparent)",
+            animation: "pulse 2.4s ease-in-out infinite",
+          }}
+        />
+        Currently in development
+      </span>
+    </div>
+  );
+}
+
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "accent": "growth",
   "showGrid": true,
@@ -51,6 +91,7 @@ function App() {
 
   return (
     <>
+      <DevBanner />
       <Nav />
       <Hero />
       <Manifesto />
