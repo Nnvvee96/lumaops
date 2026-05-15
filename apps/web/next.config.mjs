@@ -9,6 +9,9 @@ const nextConfig = {
   reactStrictMode: true,
   typedRoutes: true,
   poweredByHeader: false,
+  // Transpile the LumaOps workspace packages — they ship TS source
+  // directly (no build step).
+  transpilePackages: ["@lumaops/ui", "@lumaops/core"],
   // Pin the workspace root so Next.js doesn't pick the wrong lockfile
   // when running inside a git worktree (or any sibling checkout).
   outputFileTracingRoot: join(__dirname, "..", ".."),
