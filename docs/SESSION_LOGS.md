@@ -4,6 +4,7 @@ version: 3.1
 date: February 19, 2026
 status: ACTIVE / SESSION_LOG
 project: LumaOps
+dependencies: [[AGENT.md]], [[MEMORY.md]], [[IMPLEMENTATION_PLAN.md]], [[SKILLS_COMPOUNDING.md]]
 ---
 # SESSION_LOGS.md - Real-Time State
 # PROJECT: LumaOps

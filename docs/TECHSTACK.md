@@ -4,6 +4,7 @@ version: 1.0
 date: May 15, 2026
 status: ACTIVE / TECH_STACK
 project: LumaOps
+dependencies: [[AGENT.md]], [[CONSTRAINTS.md]], [[PATTERNS.md]], [[LESSONS_LEARNED.md]], [[CONCEPT.md]]
 ---
 # TECHSTACK.md - LumaOps Technical Baseline
 # PROJECT: LumaOps

@@ -4,6 +4,7 @@ version: 1.0
 date: May 15, 2026
 status: ACTIVE / PROJECT_MEMORY
 project: LumaOps
+dependencies: [[AGENT.md]], [[CONSTRAINTS.md]], [[SESSION_LOGS.md]], [[SKILLS_COMPOUNDING.md]], [[LESSONS_LEARNED.md]]
 ---
 # MEMORY.md - Project Knowledge Base
 # PROJECT: LumaOps

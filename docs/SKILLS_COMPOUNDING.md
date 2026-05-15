@@ -3,6 +3,7 @@ system: Atlas Vault OS
 version: 3.2
 date: February 19, 2026
 status: STATIC / PERSISTENT
+dependencies: [[AGENT.md]], [[MEMORY.md]], [[SESSION_LOGS.md]], [[LESSONS_LEARNED.md]], [[PATTERNS.md]]
 ---
 ## 1. Harness & Automation
 SHA Discipline: Match head only.

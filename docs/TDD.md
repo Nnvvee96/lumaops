@@ -4,6 +4,7 @@ version: 3.1
 date: February 19, 2026
 status: DRAFT / TECHNICAL_DESIGN
 project: LumaOps
+dependencies: [[CONCEPT.md]], [[IMPLEMENTATION_PLAN.md]], [[AUDIT.md]], [[CONSTRAINTS.md]], [[LESSONS_LEARNED.md]]
 ---
 # TDD.md - Technical Design Blueprint
 # PROJECT: LumaOps | RISK TIER: Medium
