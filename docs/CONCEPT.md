@@ -1046,25 +1046,32 @@ Current decision:
 - Analyze README, manifests, releases, issues.
 
 ## 17. Open Questions
-Original (still open):
 
-- Should the first app use Prisma or Drizzle for the database layer?
-- Should Cloudflare Workers/D1 be the default backend because the operator already uses Cloudflare?
+Decisions resolved in the Phase-1 Spec-Lock pass (2026-05-15) are kept here as historical record. The lock entries live in `MEMORY.md` §1.1 with full reasoning; this section only marks status.
+
+### Resolved (2026-05-15)
+- ✅ **ORM** — Drizzle. (MEMORY Decision M)
+- ✅ **Backend shape** — Next.js App Router + Postgres locally; Cloudflare adapter open for later. (Decision N)
+- ✅ **Auth (Self-Hosted MVP)** — Single-user, no login, local `.env`. (Decision O)
+- ✅ **Support surface** — Surface-only in MVP, native reply candidate Phase 4+. (Decision F)
+- ✅ **Operator-cockpit scope** — Broad (notes, decision log, brainstorm, launch calendar, cohort tracker). (Decision E)
+- ✅ **Studio identity** — Public Studio name + optional logo, no public URL in MVP. (Decision G)
+- ✅ **Brand-asset upload** — Auto-favicon with manual override. (Decision H)
+- ✅ **Daily-ritual surface** — Implicit via Overview in MVP, explicit Morning-View in Phase 5. (Decision I)
+- ✅ **Native cohort tracking** — Native cohort engine, target Phase 5. (Decision J)
+- ✅ **Hosted-phase pricing** — Defer until Phase 4 opens. (Decision K)
+- ✅ **Connector marketplace** — PR-only in MVP, hosted catalog candidate Phase 4. (Decision L)
+
+### Still open
+
+NOESIS-implementation specifics (resolve when Phase 4 GitHub-connector work for NOESIS opens):
+
 - Should NOESIS Worker emit LumaOps events directly, or should LumaOps pull/export NOESIS data on schedule?
 - Which metric is the primary north-star for NOESIS beta: beta leads, download starts, or first app launches?
-- How much PII should LumaOps store for leads and beta users?
-- Should support live natively in LumaOps or remain GitHub-first with a LumaOps support lens?
 
-Surfaced by landing-page conceptualization (must decide before locking next scope phase):
+Cross-cutting:
 
-- **Operator-cockpit scope** — broad (notes / brainstorm / calendar / decision log / cohort tracker per product) or narrow (metrics only)? Working recommendation: broad.
-- **Native vs. surfaced support** — does LumaOps reply to tickets natively, or only surface them? Working recommendation: surface-only in MVP, native possible in Phase 4+.
-- **Studio-level public identity** — does the user name their Studio (e.g. "Navyug Studio") as a public-facing identity, or stays workspace-only? Affects hosted/multi-tenant phase.
-- **Hosted-phase pricing model** — pure convenience layer over open-source forever, or freemium with paid features (alerts, SSO, audit logs)? Defer until Phase 4 starts.
-- **Connector marketplace** — PR-only library (Phase 3) or eventually a hosted catalog (Phase 4)?
-- **Brand-asset upload** — favicon-only auto-fetch (current working decision) or full per-product logo upload with manual override?
-- **Daily-ritual surface** — explicit "Morning" view that surfaces the five beats in order, or do they emerge naturally from the Overview? Working recommendation: explicit Morning surface in Phase 5.
-- **Native cohort tracking** — track beta cohorts (lead → install → activation → retention) natively, or only surface counts? Working recommendation: native, since this is a unique differentiator vs. PostHog/Plausible.
+- How much PII should LumaOps store for leads and beta users? (Defer to event-schema lock in TDD §3 — current working answer: hash emails, no raw PII unless explicitly opted in by the operator at integration setup.)
 
 ## 18. Non-Negotiables
 

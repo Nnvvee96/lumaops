@@ -33,25 +33,39 @@ Rationale:
 - Porting to Next.js becomes an option only once `apps/web` exists and a unified pipeline pays for itself.
 
 ## 2b. Application Stack
+Decisions below were locked in the 2026-05-15 Phase-1 Spec-Lock pass (MEMORY §1.1).
+
 Frontend/app:
-- Next.js App Router.
-- React.
-- TypeScript.
+- Next.js App Router (locked — MEMORY Decision N).
+- React 18+.
+- TypeScript strict.
 - Tailwind CSS.
 - shadcn/ui.
 - lucide-react.
 
 Data and validation:
-- PostgreSQL.
-- Prisma or Drizzle, final choice to be locked before schema implementation.
-- Zod for boundary validation.
+- PostgreSQL (locked).
+- **Drizzle** ORM (locked — MEMORY Decision M). Rationale: TS-first, no engine binary, no code-gen step, clean Cloudflare D1 migration path for a later hosted edge variant.
+- Zod for boundary validation at every external surface (HTTP request bodies, connector responses, env parsing).
+
+API layer:
+- Next.js Route Handlers + Server Actions (locked — MEMORY Decision N).
+- No separate Express/Hono service in the MVP.
+- Cloudflare Workers+D1 adapter is an explicit future option; Drizzle keeps that door open without schema rewrite.
+
+Auth (MVP):
+- Single-user, no login (locked — MEMORY Decision O).
+- Operator identity defined in `.env` (e.g. `LUMAOPS_OPERATOR_NAME`).
+- Cloudflare Access documented as optional protection layer for public-facing self-hosted deployments.
+- Hosted variant gets its own auth/tenancy spec when Phase 4 opens.
 
 Charts:
 - Recharts for MVP charts unless a stronger local pattern emerges.
 
-Runtime:
-- Node.js 22.x.
-- pnpm.
+Runtime & toolchain:
+- Node.js 22.x LTS.
+- pnpm workspaces (monorepo).
+- Docker Compose for local Postgres in self-hosted setups.
 
 ## 3. Architecture Shape
 Planned monorepo:
