@@ -2,83 +2,134 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
-  S2C — neutral shadcn token map.
-  S2D will override every variable below with the LumaOps Lumi palette
-  + signal colors per CONCEPT §12.1. These defaults exist so shadcn
-  primitives render coherently in the interim.
-*/
+/* ============================================================
+ * LumaOps design tokens (CONCEPT §12.1 — locked).
+ *
+ * Two coordinate systems exist on every variable:
+ *  - Named LumaOps tokens     (--paper, --ink, --lumi, …)
+ *    used directly by hand-written LumaOps components / charts.
+ *  - shadcn semantic tokens   (--background, --foreground, …)
+ *    referenced by shadcn primitives (button/card/badge/…).
+ *
+ * Both are kept in sync. Shadcn tokens stay in HSL because the
+ * primitives wrap them as hsl(var(--…)); LumaOps tokens use the
+ * original hex / oklch values to preserve the brand identity.
+ * ============================================================ */
 
 @layer base {
   :root,
   :root[data-theme="dark"] {
-    --background: 30 18% 5%;
-    --foreground: 40 18% 92%;
+    /* LumaOps named — paper (warm near-black) + ink (warm cream) */
+    --paper:      #0c0b08;
+    --paper-1:    #14120d;
+    --paper-2:    #1c1a13;
+    --line:       #26231b;
+    --line-2:     #36322a;
+    --ink:        #f3efe4;
+    --ink-mid:    #aba89c;
+    --ink-low:    #75726a;
+    --ink-dim:    #4d4a42;
 
-    --card: 30 18% 7%;
-    --card-foreground: 40 18% 92%;
+    /* INK deep — dramatic feature blocks (cockpit-section parity) */
+    --ink-bg:     #060503;
+    --ink-bg-1:   #0e0c08;
+    --ink-bg-2:   #161410;
+    --ink-line:   #221f17;
+    --ink-line-2: #2e2a21;
 
-    --popover: 30 18% 7%;
-    --popover-foreground: 40 18% 92%;
+    /* Lumi — brand accent, luminous warm chartreuse */
+    --lumi:       oklch(0.86 0.19 110);
+    --lumi-dk:    oklch(0.88 0.19 110);
+    --lumi-deep:  oklch(0.78 0.17 110);
+    --lumi-soft:  oklch(0.55 0.14 115);
 
-    --primary: 40 18% 92%;
-    --primary-foreground: 30 18% 5%;
+    /* Signal palette — data contexts only, never chrome/marketing */
+    --growth:     var(--lumi);
+    --revenue:    oklch(0.78 0.13 80);
+    --release:    oklch(0.74 0.14 285);
+    --support:    oklch(0.72 0.16 28);
 
-    --secondary: 30 14% 14%;
-    --secondary-foreground: 40 18% 92%;
+    /* Radii */
+    --radius:     0.5rem;
 
-    --muted: 30 14% 14%;
-    --muted-foreground: 38 8% 65%;
-
-    --accent: 30 14% 14%;
-    --accent-foreground: 40 18% 92%;
-
-    --destructive: 0 70% 55%;
-    --destructive-foreground: 40 18% 92%;
-
-    --border: 38 16% 16%;
-    --input: 38 16% 16%;
-    --ring: 38 16% 30%;
-
-    --radius: 0.5rem;
+    /* shadcn semantic — HSL triplets (no hsl() wrapper here) */
+    --background:           40 18% 4%;
+    --foreground:           42 36% 92%;
+    --card:                 40 19% 7%;
+    --card-foreground:      42 36% 92%;
+    --popover:              40 19% 7%;
+    --popover-foreground:   42 36% 92%;
+    --primary:              42 36% 92%;
+    --primary-foreground:   40 18% 4%;
+    --secondary:            38 17% 13%;
+    --secondary-foreground: 42 36% 92%;
+    --muted:                38 17% 13%;
+    --muted-foreground:     40 9% 64%;
+    --accent:               38 17% 13%;
+    --accent-foreground:    42 36% 92%;
+    --destructive:          0 70% 55%;
+    --destructive-foreground: 42 36% 92%;
+    --border:               38 17% 13%;
+    --input:                38 17% 13%;
+    --ring:                 34 13% 19%;
   }
 
   :root[data-theme="light"] {
-    --background: 44 26% 94%;
-    --foreground: 30 10% 12%;
+    --paper:      #f5f3ec;
+    --paper-1:    #ede9de;
+    --paper-2:    #e2ddcb;
+    --line:       #d3cdba;
+    --line-2:     #bdb6a0;
+    --ink:        #14130f;
+    --ink-mid:    #56544a;
+    --ink-low:    #87847a;
+    --ink-dim:    #b5b0a0;
 
-    --card: 44 26% 91%;
-    --card-foreground: 30 10% 12%;
+    --ink-bg:     #0f0e0a;
+    --ink-bg-1:   #16140e;
+    --ink-bg-2:   #1d1b13;
+    --ink-line:   #28251c;
+    --ink-line-2: #383426;
 
-    --popover: 44 26% 91%;
-    --popover-foreground: 30 10% 12%;
+    --lumi:       oklch(0.82 0.18 110);
+    --lumi-dk:    oklch(0.88 0.19 110);
+    --lumi-deep:  oklch(0.50 0.14 115);
+    --lumi-soft:  oklch(0.55 0.14 115);
 
-    --primary: 30 10% 12%;
-    --primary-foreground: 44 26% 94%;
+    --revenue:    oklch(0.62 0.13 65);
+    --release:    oklch(0.55 0.14 285);
+    --support:    oklch(0.58 0.16 28);
 
-    --secondary: 40 18% 87%;
-    --secondary-foreground: 30 10% 12%;
-
-    --muted: 40 18% 87%;
-    --muted-foreground: 30 6% 36%;
-
-    --accent: 40 18% 87%;
-    --accent-foreground: 30 10% 12%;
-
-    --destructive: 0 70% 45%;
+    --background:           44 26% 94%;
+    --foreground:           40 14% 8%;
+    --card:                 44 26% 91%;
+    --card-foreground:      40 14% 8%;
+    --popover:              44 26% 91%;
+    --popover-foreground:   40 14% 8%;
+    --primary:              40 14% 8%;
+    --primary-foreground:   44 26% 94%;
+    --secondary:            40 18% 87%;
+    --secondary-foreground: 40 14% 8%;
+    --muted:                40 18% 87%;
+    --muted-foreground:     38 9% 36%;
+    --accent:               40 18% 87%;
+    --accent-foreground:    40 14% 8%;
+    --destructive:          0 70% 45%;
     --destructive-foreground: 44 26% 94%;
-
-    --border: 40 14% 76%;
-    --input: 40 14% 76%;
-    --ring: 30 8% 42%;
+    --border:               42 18% 76%;
+    --input:                42 18% 76%;
+    --ring:                 36 7% 42%;
   }
 
-  * {
-    @apply border-border;
-  }
+  *  { border-color: hsl(var(--border)); }
+  html, body { background: var(--paper); color: var(--ink); }
   body {
-    @apply bg-background text-foreground;
-    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-      "Segoe UI", sans-serif;
+    font-family: var(--font-sans, ui-sans-serif), system-ui, -apple-system, sans-serif;
+    font-feature-settings: "ss01", "cv11", "cv02";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 }
+
+/* Selection — paper/ink invert (matches landing) */
+::selection { background: var(--ink); color: var(--paper); }
