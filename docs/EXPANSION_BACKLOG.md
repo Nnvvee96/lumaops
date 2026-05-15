@@ -21,23 +21,34 @@ Entries are numbered (`E-001`, `E-002`, …) and never renumbered. New entries g
 
 ---
 
-## E-001 — AGPL License Upgrade Option
+## E-001 — AGPL License Upgrade
 
-**State**: parked.
+**State**: **done (2026-05-15)**.
 
-**Trigger**: A competitor company clones the LumaOps codebase, launches a competing hosted service under their own brand without contributing back, and starts winning material customer share. In other words: only if our open-source generosity gets weaponized against us in a way the OSS narrative can't otherwise defend.
+**Outcome**: License switched from MIT to **AGPL-3.0-only** proactively, before Phase B opens. Operator decided not to wait for a competitor incident — wants the protection from day one.
 
-**Notes**:
-- LumaOps is MIT-licensed today (CONCEPT §18.2 Promise #1). That maximizes adoption + community contribution + Plausible-like trust signaling.
-- AGPL (Affero General Public License) would close the "cloud loophole": anyone running LumaOps as a network service must release their modifications under AGPL. Effectively prevents a closed-source competing hosted service.
-- License change is **reversible only forward in time** — every commit under MIT remains MIT, but new contributions can be AGPL. Historic MIT-licensed code can be forked and re-licensed by anyone.
-- Migration path if we ever pull this trigger:
-  1. New CONTRIBUTING.md requires AGPL CLA for new contributions.
-  2. New LICENSE file in repo root (kept alongside MIT-history-LICENSE).
-  3. README headline updated.
-  4. Re-announce on the blog with rationale and grandfather clauses for existing forks.
-- Risk: AGPL has stigma in some enterprise circles. Some users won't touch AGPL code. Mitigated by the fact that LumaOps's target audience is indie founders, not enterprise legal departments.
-- Reference: Cal.com (AGPL), Plausible (AGPL since 2021 — was MIT before), Sentry (BSL/FSL hybrid).
+**What changed in the repo**:
+- `LICENSE` file replaced with canonical GNU AGPL-3.0 text (from `gh api /licenses/agpl-3.0`).
+- All `package.json` files: `"license": "AGPL-3.0-only"`.
+- `docs/CONCEPT.md` §17 Decision K + §18.2 Promise #1 reflect AGPL.
+- `docs/MEMORY.md` Decision K updated.
+- `docs/TECHSTACK.md` §7 Hosted Infrastructure Stack notes AGPL.
+- README headline shows AGPL.
+
+**What this means in practice**:
+- Repo stays **public** on GitHub. Anyone can clone, modify, run, self-host — that's still true.
+- The new constraint: **anyone who runs LumaOps as a network service must release their modifications under AGPL too.** This closes the "cloud loophole" — a competitor cannot take the code, modify it, host it as a closed-source SaaS, and not contribute back.
+- Closed-source self-hosting for personal/internal use stays fine. The AGPL trigger is *offering it as a network service to third parties*.
+- Pre-2026-05-15 commits remain MIT in their historical form. Anyone who forked LumaOps before this date keeps the MIT rights for that snapshot. New commits from this date forward are AGPL.
+
+**Why proactive rather than reactive**:
+- Standard pattern for indie OSS founders monetising hosting: lock in protection before any visible traction makes the codebase a target. Cal.com / Plausible / Grafana all did the same migration. None of them suffered adoption loss.
+- Pricing model is locked (Decision K, $7/mo hosted), so the OSS-vs-hosted economic logic exists — AGPL just protects it structurally rather than relying on goodwill.
+
+**Risk reminders**:
+- Enterprise legal departments are sometimes wary of AGPL. Mitigated by LumaOps's audience being indie founders, not Fortune-500 procurement.
+- If we ever want enterprise adoption that's blocked by AGPL fear, we can offer a commercial license via CLA (Contributor License Agreement) — keeps the OSS path open while allowing paid relicensing for those who need it. Deferred until anyone actually asks.
+- Reference: Cal.com (AGPL since launch), Plausible (AGPL since 2021 — also a MIT→AGPL migration), Ghost (MIT but uses other defenses), Sentry (BSL/FSL hybrid — more aggressive than AGPL).
 
 ---
 

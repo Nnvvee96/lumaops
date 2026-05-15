@@ -38,7 +38,7 @@ Decision J — Native cohort tracking: **native cohort engine, target Phase 5**.
 Per-product cohort tracker follows leads through Lead → Install → Activation → Retention as a first-class object with identity resolution and event-joining. Why: this is a Killer-Differential vs. PostHog/Plausible for beta launches — surface-only counts cannot answer "did this specific cohort retain?" Scope-heavy, hence Phase 5 rather than MVP.
 
 Decision K — Hosted-phase pricing: **Pure-Convenience Tier, $7/mo · $60/yr** (updated 2026-05-15).
-OSS stays MIT-licensed, public-repo, feature-identical to the hosted variant — forever. Hosted variant is managed infrastructure only: no premium features, no OSS-gating. Users pay us for Cockpit-as-Service (we host Postgres + cockpit + sync workers + backups), not for additional capability.
+OSS stays AGPL-3.0-only (upgraded from MIT on 2026-05-15 — see E-001), public-repo, feature-identical to the hosted variant — forever. Hosted variant is managed infrastructure only: no premium features, no OSS-gating. Users pay us for Cockpit-as-Service (we host Postgres + cockpit + sync workers + backups), not for additional capability.
 Sequencing:
 - **Phase A** (now → end of `IMPLEMENTATION_PLAN.md` Phase 5): OSS-only. No hosted variant exists. Cost to operate LumaOps: $0/mo.
 - **Phase B** (post-Phase-5): Closed Hosted Beta. 20–50 free invite seats against feedback. Validates that operators actually want managed hosting at this price point.

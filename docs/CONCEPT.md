@@ -1089,7 +1089,7 @@ Decisions resolved in the Phase-1 Spec-Lock pass (2026-05-15) are kept here as h
 - ✅ **Brand-asset upload** — Auto-favicon with manual override. (Decision H)
 - ✅ **Daily-ritual surface** — Implicit via Overview in MVP, explicit Morning-View in Phase 5. (Decision I)
 - ✅ **Native cohort tracking** — Native cohort engine, target Phase 5. (Decision J)
-- ✅ **Hosted-phase pricing** — Pure-Convenience Tier @ $7/mo · $60/yr via Polar.sh or Lemon Squeezy. OSS stays MIT + feature-identical forever. Sequencing: Phase A (OSS-only) → Phase B (Closed Beta) → Phase C (Public). (Decision K, updated 2026-05-15)
+- ✅ **Hosted-phase pricing** — Pure-Convenience Tier @ $7/mo · $60/yr via Polar.sh or Lemon Squeezy. OSS stays AGPL-3.0-only (upgraded from MIT) + feature-identical forever. Sequencing: Phase A (OSS-only) → Phase B (Closed Beta) → Phase C (Public). (Decision K, updated 2026-05-15)
 - ✅ **Connector marketplace** — PR-only in MVP, hosted catalog candidate Phase 4. (Decision L)
 
 ### Still open
@@ -1118,7 +1118,7 @@ Cross-cutting:
 ### Public (the six LumaOps promises)
 The six hard claims made on the landing — public-facing, must be defensible by the implementation:
 
-1. **Open source, by default.** MIT-licensed, full operations layer in your own repo.
+1. **Open source, by default.** AGPL-3.0-only, full operations layer in your own repo. Public source, copyleft for network use — anyone who runs LumaOps as a service must release their modifications under AGPL.
 2. **Self-hostable, first.** Laptop, Cloudflare tunnel, homelab — wherever your data lives.
 3. **Bring your own tokens.** Every connector against your accounts. No LumaOps server holds secrets.
 4. **Honest data, always.** Stale labelled stale. Inferred labelled inferred. Missing labelled missing.
