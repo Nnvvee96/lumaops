@@ -898,6 +898,48 @@ The marketing surface uses one anchor pattern: **a quiet section, then a dense o
 - Integration health panel.
 - Alert / attention queue.
 
+### 12.5 Visual Fidelity Standard — Landing as North Star
+
+The cockpit (`apps/web`) must reach the same compositional density and modern editorial feel as the marketing landing (`apps/landing`). Tokens and fonts already match (S2D). The remaining gap is **composition** — the dense-but-calm dashboard aesthetic the landing demonstrates on its mock sections.
+
+**The landing is not just marketing. It is the visual briefing document for the cockpit.** Phase 5 explicitly closes the gap, but Phases 3 and 4 must already lift composition patterns from the landing as they touch surfaces — not deliver shadcn-default UI and patch later.
+
+#### Concrete patterns to lift from `apps/landing/src/*.jsx`
+
+These six patterns are the LumaOps composition signature. The cockpit's equivalent surfaces must visibly reach for them, not invent generic alternatives:
+
+| Landing source | Pattern | Cockpit equivalent |
+|---|---|---|
+| `hero.jsx` (hero-cat-pill) | mono uppercase eyebrow with separator-dots between segments | every page header eyebrow |
+| `sections.jsx` (signal-row) | dense horizontal row: mono num-tag + serif italic verb + visual cell + meta — stacks on mobile | per-product summary rows, integration tiles |
+| `workspace.jsx` (workspace table) | mono headers, dense rows, status-pill column, primary-metric column with source label below | `/products` table, integration list |
+| `cockpit-section.jsx` (BootDashboard mock) | dramatic dark-feature-block with a live boot sequence + dense metric grid + scan-beam animation | `/overview` hero section once data flows (Phase 4+) |
+| `ritual.jsx` (Daily Ritual beats) | numbered timestamp column + content column + visual ledger column; subtle connecting line | future Phase-5 Morning view (EXPANSION_BACKLOG E-009) |
+| Anywhere a status pill renders | `.pill` primitive with optional pulse-dot (`.pill.live .dot`) for live state | connector tiles, integration state badges, freshness indicators |
+
+#### Typography rhythm — the three-font cadence
+
+The landing carries a deliberate cadence: **Geist Sans for body, Geist Mono for labels and source attribution, Instrument Serif italic for ONE accent word per major headline**. The cockpit must keep this cadence. Watch especially for:
+
+- Every section header gets a mono eyebrow above the headline.
+- Every primary headline gets exactly one serif italic accent word (e.g. *One*, *Today*, *respects*) — never decorative, always emphasising the message.
+- Every metric value gets a Geist Mono tabular-nums treatment plus a source-attribution line in mono micro-caps.
+
+#### What the cockpit must AVOID
+
+- Default shadcn shadow stacks ("Card with rounded-2xl and shadow-md") — strip shadows, replace with single-pixel borders from `--line` / `--line-2`.
+- shadcn's neutral grey palette — every grey on screen must resolve to a paper/ink token (`--paper-1`, `--ink-mid`, `--ink-low`), never a Tailwind default `slate` / `zinc`.
+- Generic "Empty card with icon and headline" empty-states beyond what the existing EmptyState primitive renders.
+- Default Tailwind container max-widths everywhere — match the landing's `wrap` (1280px) / `wrap-narrow` (1080px) split per surface.
+
+#### Acceptance — every UI-touching slice
+
+Every PR that adds or changes a UI surface must answer the line in the PR template:
+
+> **Visual match against landing**: ✓ / N/A (backend only)
+
+If ✓ → state which landing section was referenced as the composition source. If a slice introduces a pattern with no landing equivalent, flag it explicitly — those become candidates for the next landing-design pass (Claude Design briefing).
+
 ## 13. Metrics Philosophy
 LumaOps must distinguish:
 
