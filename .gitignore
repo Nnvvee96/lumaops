@@ -9,6 +9,9 @@ build/
 out/
 coverage/
 
+# TypeScript incremental
+*.tsbuildinfo
+
 # env
 .env
 .env.*
