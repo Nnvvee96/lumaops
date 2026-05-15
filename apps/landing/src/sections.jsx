@@ -265,7 +265,7 @@ function SignalRow({ signal, index, total }) {
   const [hovered, setHovered] = React.useState(false);
   return (
     <div
-      className="vreveal"
+      className="signal-row vreveal"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -289,7 +289,7 @@ function SignalRow({ signal, index, total }) {
       </div>
 
       {/* big verb */}
-      <div style={{
+      <div className="signal-verb" style={{
         fontFamily: "var(--font-sans)",
         fontWeight: 300,
         fontSize: "clamp(34px, 4vw, 52px)",
@@ -309,7 +309,7 @@ function SignalRow({ signal, index, total }) {
       </div>
 
       {/* visual */}
-      <div style={{
+      <div className="signal-visual" style={{
         height: 80,
         display: "flex", alignItems: "center", justifyContent: "stretch",
         opacity: hovered ? 1 : 0.7,

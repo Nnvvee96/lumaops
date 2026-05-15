@@ -111,7 +111,7 @@ function Hero() {
           </h1>
 
           {/* Category line — the punchline that says what LumaOps IS, in 1 second */}
-          <div className="reveal revealed" style={{
+          <div className="reveal revealed hero-cat-pill" style={{
             animationDelay: "180ms",
             marginTop: 28,
             display: "inline-flex", alignItems: "center", gap: 14,

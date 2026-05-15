@@ -53,7 +53,9 @@ function CockpitSection() {
         </div>
 
         {/* full dashboard mock with boot sequence + scan beam */}
-        <BootDashboard />
+        <div className="cockpit-mock-wrap">
+          <BootDashboard />
+        </div>
 
       </div>
     </section>
