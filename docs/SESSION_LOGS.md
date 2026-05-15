@@ -9,9 +9,9 @@ project: LumaOps
 # PROJECT: LumaOps
 
 ## 1. Current Mission
-Task: Bootstrap LumaOps open-source repository and documentation baseline.
-Head SHA: pending initial commit.
-Harness: docs verification and git remote setup.
+Task: Complete LumaOps repository identity and local folder rename.
+Head SHA: b2c5be0 before folder-rename log commit.
+Harness: docs verification, git status, reference scan, hygiene scan.
 
 ## 2. Squad Vitality
 Monica: Monitoring.
@@ -26,6 +26,7 @@ Dwight/Kelly: Scanning/distributing.
 2026-05-15: Captured initial concept: LumaOps is a launch operations dashboard for indie products, starting with NOESIS.Tools and expanding via GitHub, Cloudflare, Stripe, telemetry, and support integrations.
 2026-05-15: Product name selected as LumaOps; domain `lumaops.app` purchased.
 2026-05-15: Locked product stance: open-source self-hostable browser app first; hosted app and desktop wrapper later.
+2026-05-15: Verified active repository files contain no remaining previous-codename references before local folder rename.
 
 ## 4. Crash Recovery
 State: [IDs/context].
