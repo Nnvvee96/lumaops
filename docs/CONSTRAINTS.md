@@ -1,9 +1,9 @@
 ---
 system: Atlas Vault OS
-version: 3.1
-date: February 19, 2026
+version: 3.2
+date: May 15, 2026
 status: GOVERNANCE / CONSTRAINTS
-dependencies: [[PATTERNS.md]], [[AGENT.md]], [[AUDIT.md]]
+dependencies: [[PATTERNS.md]], [[AGENT.md]], [[AUDIT.md]], [[LESSONS_LEARNED.md]]
 ---
 # CONSTRAINTS.md - Core Operating Constraints
 
@@ -46,6 +46,12 @@ UI/frontend changes require machine-verifiable proof (logs, manifests, Playwrigh
 Human claims without evidence are rejected.
 
 # 4. Revenue & Compounding Constraints
+
+Lessons Compounding (Cross-Project)
+[[LESSONS_LEARNED.md]] is the canonical, cross-project ledger of abstracted rules.
+At project start, load it; reference relevant entries by ID in [[IMPLEMENTATION_PLAN.md]] "Risks From Experience" blocks.
+At phase close, promote abstractable findings from project [[SKILLS_COMPOUNDING.md]] into LESSONS_LEARNED with a stable §N.M ID.
+The hurdle rate of new projects must fall over time; if it isn't, the distillation step is being skipped.
 
 Attribution Discipline
 Traffic and views are secondary.
