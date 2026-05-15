@@ -1,6 +1,6 @@
 ---
 system: Atlas Vault OS
-version: 1.0
+version: 1.1
 date: May 15, 2026
 status: ACTIVE / STRATEGIC_BLUEPRINT
 project: LumaOps
@@ -107,6 +107,27 @@ Avoid weak generic positioning:
 - Do not overpromise automatic truth from source code.
 - Do not make it feel enterprise-heavy.
 
+### Public Narrative Arc
+The public-facing story is now crystallized as five messages, in order:
+
+1. **Five signals. One room.** — hero punchline.
+2. **Each system knows a partial truth.** — problem framing.
+3. **What you see: shipped, converted, earned, broke, growing.** — product surface.
+4. **Every product. One studio.** — multi-product framing.
+5. **Stop stitching. Start operating.** — closing call.
+
+The five public verbs LumaOps owns: **shipped, converted, earned, broke, growing.** They map to the five integration categories (GitHub releases, Cloudflare/tracking funnel, Stripe revenue, support/telemetry errors, telemetry/usage growth).
+
+### Conceptual Anchor: Einklang
+LumaOps does not just *aggregate* signals — it brings them into one rhythm (*Einklang* / harmony / coherence). The "One X" construction (one room, one rhythm, one studio, one cockpit, one step at a time) is the LumaOps copy fingerprint and should be carried into onboarding, empty states, and section headings — not only marketing surfaces.
+
+### The Operator's Daily Question
+The literal copy anchor of the brand:
+
+> Is this product alive, converting, shipping, earning, healthy?
+
+This is the question every indie operator asks every morning. LumaOps is the answer.
+
 ## 4. Target Users
 ### Primary User
 Solo founder / indie hacker shipping one or more software products.
@@ -143,12 +164,12 @@ The operator uses LumaOps for own products first:
 LumaOps is organized around five major entities:
 
 ### Workspace
-The private operating space.
+The private operating space. Internally referred to as `workspace`; in public-facing copy framed as **Studio** because it carries the right craft connotation for indie founders shipping multiple products.
 
 Examples:
 
 - Operator profile.
-- Studio name.
+- Studio name (public identity, e.g. "Navyug — Indie Studio").
 - Timezone.
 - Currency.
 - Default date range.
@@ -162,14 +183,38 @@ Fields:
 
 - Name.
 - Slug.
-- Status: idea, beta, live, paused, archived.
+- Status: `idea`, `pre-launch`, `beta`, `live`, `active`, `paused`, `archived`.
 - Website domain.
 - GitHub repo.
 - Release channel.
-- Product type: desktop app, SaaS, website, API, mobile app, library.
-- Primary metric.
+- Product type: desktop app, SaaS, website, API, mobile app, library, research system.
+- Primary metric (defaulted by product type — see below).
 - Health score.
 - Integration status.
+
+Status semantics:
+
+- `idea` — captured but not in build.
+- `pre-launch` — waitlist phase, no live product yet.
+- `beta` — live with restricted/private access.
+- `live` — public, customer-facing.
+- `active` — ongoing internal system, not yet customer-facing (e.g. research/internal-tool products).
+- `paused` — intentionally on hold.
+- `archived` — wound down, kept for record.
+
+Primary metric defaults by product type:
+
+| Product type            | Default primary metric                                |
+|-------------------------|-------------------------------------------------------|
+| Web app — pre-launch    | Waitlist count                                        |
+| Web app — beta          | Weekly visits + conversion                            |
+| Web app — live (SaaS)   | MRR + active customers                                |
+| Desktop app             | Downloads + first-launch activations                  |
+| Mobile app              | Installs + first-launch activations                   |
+| API / library           | API calls + active integrations                       |
+| Research system / internal | Knowledge entries / domain coverage / internal velocity |
+
+The primary metric is what the product card surfaces by default; full detail lives in the product cockpit.
 
 Initial product:
 
@@ -178,6 +223,16 @@ Initial product:
 - Website: `noesis.tools`
 - GitHub repo: `Nnvvee96/NOESIS`
 - Product type: desktop app with public website and private beta download flow.
+
+#### Studio example: Navyug (proving-ground)
+The operator's own Studio used as the canonical multi-product example. Demonstrates that LumaOps is product-type-agnostic from day one:
+
+| Product       | Domain              | Type             | Status      |
+|---------------|---------------------|------------------|-------------|
+| ApplyIQ       | `applyiq.app`       | Web app          | beta        |
+| Planora       | `getplanora.app`    | Web app          | pre-launch  |
+| OHARA         | `ohara-labs.com`    | Research system  | active      |
+| NOESIS.Tools  | `noesis.tools`      | Desktop app      | beta        |
 
 ### Integration
 Integrations attach external systems to a product or workspace.
@@ -362,6 +417,25 @@ Tabs:
 - Telemetry.
 - Settings / Integrations.
 
+### Overview ↔ Product-Level Duality
+Every metric surface has two reading levels:
+
+- **Overview level (cross-product, Studio-wide).** Aggregates the five verbs across the whole Studio — combined visits, combined leads, combined revenue, open issues across all products, etc.
+- **Product level (single product).** Same five verbs scoped to one product, with that product's specific funnels, releases, support, telemetry.
+
+The five verbs (shipped/converted/earned/broke/growing) are the same at both levels; only the aggregation changes.
+
+### Operator-Surface Modules (decision pending)
+Beyond data-driven tabs, the per-product cockpit could host lightweight operator tools:
+
+- **Notes** — per-product scratchpad / running notes.
+- **Brainstorm** — capture future ideas tied to that product.
+- **Calendar / Launch plan** — release dates, milestones, beta cohorts, marketing moments.
+- **Decision log** — explicit "decided X on date Y because Z" — invaluable for solo founders rebuilding context.
+- **Cohort tracker** — for beta products: which leads got the link, who installed, who churned.
+
+This expands LumaOps from "metric cockpit" toward "operator cockpit" — the single per-product surface for the founder. Decision required (tracked in §17): broad operator scope or narrow metrics-only? Working recommendation: **broad**, because the differentiating value vs. PostHog/Plausible is the operator surface, not just metrics.
+
 ## 7. NOESIS Product Detail Concept
 NOESIS.Tools is the first concrete implementation target.
 
@@ -538,6 +612,26 @@ Suggested next steps:
 - Connect email provider for lead/delivery metrics.
 
 ## 9. Integration Concepts
+
+### Connector Status Taxonomy
+Every connector tile in the UI must always show one of:
+
+- `live` — connected and syncing successfully.
+- `syncing` — fetch in progress.
+- `pending` — credentials present, first sync not yet completed.
+- `planned` — slot reserved in the UI, integration not yet implemented.
+- `stale` — last successful sync older than the freshness threshold for this connector.
+
+This operationalizes the §2 rule that missing integrations must not fake truth: state is always visible on the connector itself, not hidden behind a card or chart.
+
+### Open Connector Framework
+LumaOps is explicitly extensible from day one. The connector grid surfaces a **"Build your own"** tile inviting community-authored connectors against a public adapter API.
+
+Implications:
+
+- A public connector spec (event schema + adapter interface) must exist before Phase 3 (Connector Framework) starts.
+- Connectors ship as PRs against the open-source repo initially; a hosted marketplace is deferred (see §17).
+
 ### GitHub
 Purpose:
 
@@ -721,7 +815,15 @@ What open source means here:
 
 Hosted LumaOps can become a real product if the open-source core proves useful.
 
-Product phases:
+Product phases (public state markers used on landing — fade progressively as phases get further out):
+
+| Phase | Public marker      |
+|-------|--------------------|
+| 1     | shipping now       |
+| 2     | up next            |
+| 3     | planned            |
+| 4     | planned            |
+| 5     | on the horizon     |
 
 ### Phase 1: Internal Control Room
 - Single workspace.
@@ -762,38 +864,51 @@ Product phases:
 ## 12. Design Direction
 LumaOps should look like a premium internal operations product.
 
-Design principles:
+### 12.1 Brand Identity (locked)
 
-- Dense but calm.
-- Modern, sharp, and readable.
-- No generic startup landing-page styling.
-- No decorative hero page for the app itself.
-- First screen is the actual dashboard.
-- Product signals should be scannable.
-- Use charts, tables, badges, segmented controls, and status indicators.
-- Avoid oversized cards where tables/charts are better.
-- Avoid one-color monotony.
-- Avoid vague placeholder metrics.
+**Name semantics.** Luma (luminance, light, signal) + Ops (operations). LumaOps = the lit-up operations layer where scattered product signals converge into a single luminous view.
 
-Visual shell:
+**The mark.** A *convergence glyph*: four signal lines flow from the cardinal edges of a frame into a single luminous center node. The mark IS the product story (fragmented sources → one room). The center node pulses softly in live contexts.
+
+**Signature color — Lumi.** A luminous warm chartreuse, `oklch(0.84 0.19 110)`. One brand color, deeply identifying. Not blue, not violet, not standard SaaS green. Reads as "signal on / alive / ready". Pairs with deep warm black (dark mode) and warm paper-cream (light mode).
+
+**Signal palette.** Distinct from the brand color — used **only** inside dashboard data contexts, never in marketing chrome or general copy:
+
+- `growth` — Lumi (also the brand color).
+- `revenue` — bronze (`oklch(0.78 0.13 80)`).
+- `release` — violet (`oklch(0.74 0.14 285)`).
+- `support` — red (`oklch(0.72 0.16 28)`).
+
+**Typography (three-font rule, strict).**
+
+- **Geist Sans** — body, UI, numerics.
+- **Geist Mono** — labels, code, data, source attribution.
+- **Instrument Serif (italic)** — one editorial accent word per major headline (e.g. *one*, *respects*, *today*).
+
+**Theme.** Dark by default — signals "tool that works at any hour of the operator's day". Explicit light toggle, persisted per user. First paint must respect saved preference to avoid flash.
+
+### 12.2 Hard rules
+
+- **Dense, not loud.** Every pixel reports a fact.
+- **One brand color, many signal colors.** Lumi is the brand color. Signal colors appear only in data contexts.
+- **Source and freshness always visible.** Every metric carries its source line (e.g. "via Cloudflare · synced 14:32"). No fake confidence.
+- **Mono for data, sans for prose, serif for emphasis.** Three-font rule.
+- **Real signal, never decorative.** Status dots pulse only when truly live.
+- **No** emojis, gradients-for-gradient's-sake, marketing-template shadows, or "card-with-left-border-stripe" tropes.
+- **First screen of the app is the working dashboard, not a landing page.**
+
+### 12.3 Feature-moment pattern
+
+The marketing surface uses one anchor pattern: **a quiet section, then a dense operational moment, repeated.** The cockpit-mock section is the dramatic high point; the final CTA reuses the pattern at smaller scale. This should carry through to onboarding and in-product surfaces — quiet/dense/quiet/dense rhythm rather than uniformly dense.
+
+### 12.4 Visual shell
 
 - Left navigation with products.
-- Topbar with time/channel/export.
+- Topbar with time / channel / export.
 - Main dashboard area with metric cards and charts.
 - Product detail tabs.
 - Integration health panel.
-- Alert/attention queue.
-
-Possible tone:
-
-- Dark, precise, high-contrast.
-- Not too blue/slate dominated.
-- Use restrained accent colors for signal types:
-  - growth
-  - revenue
-  - support risk
-  - release health
-  - integration warnings
+- Alert / attention queue.
 
 ## 13. Metrics Philosophy
 LumaOps must distinguish:
@@ -861,6 +976,12 @@ Chosen name:
 - LumaOps
 - Domain: `lumaops.app`
 
+Semantics:
+
+- **Luma** — luminance, light, signal.
+- **Ops** — operations.
+- **LumaOps** — the lit-up operations layer where scattered product signals converge into one luminous view. Name carries the product thesis.
+
 Why it works:
 
 - Broad enough for more than analytics.
@@ -925,6 +1046,8 @@ Current decision:
 - Analyze README, manifests, releases, issues.
 
 ## 17. Open Questions
+Original (still open):
+
 - Should the first app use Prisma or Drizzle for the database layer?
 - Should Cloudflare Workers/D1 be the default backend because the operator already uses Cloudflare?
 - Should NOESIS Worker emit LumaOps events directly, or should LumaOps pull/export NOESIS data on schedule?
@@ -932,7 +1055,20 @@ Current decision:
 - How much PII should LumaOps store for leads and beta users?
 - Should support live natively in LumaOps or remain GitHub-first with a LumaOps support lens?
 
+Surfaced by landing-page conceptualization (must decide before locking next scope phase):
+
+- **Operator-cockpit scope** — broad (notes / brainstorm / calendar / decision log / cohort tracker per product) or narrow (metrics only)? Working recommendation: broad.
+- **Native vs. surfaced support** — does LumaOps reply to tickets natively, or only surface them? Working recommendation: surface-only in MVP, native possible in Phase 4+.
+- **Studio-level public identity** — does the user name their Studio (e.g. "Navyug Studio") as a public-facing identity, or stays workspace-only? Affects hosted/multi-tenant phase.
+- **Hosted-phase pricing model** — pure convenience layer over open-source forever, or freemium with paid features (alerts, SSO, audit logs)? Defer until Phase 4 starts.
+- **Connector marketplace** — PR-only library (Phase 3) or eventually a hosted catalog (Phase 4)?
+- **Brand-asset upload** — favicon-only auto-fetch (current working decision) or full per-product logo upload with manual override?
+- **Daily-ritual surface** — explicit "Morning" view that surfaces the five beats in order, or do they emerge naturally from the Overview? Working recommendation: explicit Morning surface in Phase 5.
+- **Native cohort tracking** — track beta cohorts (lead → install → activation → retention) natively, or only surface counts? Working recommendation: native, since this is a unique differentiator vs. PostHog/Plausible.
+
 ## 18. Non-Negotiables
+
+### Internal (engineering)
 - LumaOps must be useful as an open-source/self-hosted dashboard before it becomes a hosted product.
 - Do not build fake confidence from GitHub-only analysis.
 - Every metric needs a source and freshness.
@@ -941,3 +1077,67 @@ Current decision:
 - Keep the first implementation tight: dashboard shell, global overview, products, NOESIS detail.
 - Product-specific detail views must be first-class, not afterthoughts.
 - The UI must feel like a real operations cockpit, not a generic template dashboard.
+
+### Public (the six LumaOps promises)
+The six hard claims made on the landing — public-facing, must be defensible by the implementation:
+
+1. **Open source, by default.** MIT-licensed, full operations layer in your own repo.
+2. **Self-hostable, first.** Laptop, Cloudflare tunnel, homelab — wherever your data lives.
+3. **Bring your own tokens.** Every connector against your accounts. No LumaOps server holds secrets.
+4. **Honest data, always.** Stale labelled stale. Inferred labelled inferred. Missing labelled missing.
+5. **Multi-product, first-class.** Every product is a real object — pre-launch, beta, live, active, paused, idea, archived — with its own surface.
+6. **Dense, not loud.** A real cockpit, not a marketing dashboard.
+
+## 19. The Daily Ritual (UX target)
+LumaOps is not a place you live. It is a place you **visit**. The product should be navigable, scannable, and decisive enough that the operator can complete a full studio check in ~16 minutes a morning.
+
+The 16-minute promise is **a UX target, not only a marketing line.** If a typical morning session takes longer, the dashboard has failed its core job.
+
+Canonical morning beats (used as the demo arc on the landing, also the design brief for the Overview):
+
+1. **09:14** — Coffee in hand. All products green. Synced.
+2. **09:16** — One product's leads spiked. Drill in. Funnel is healthy.
+3. **09:18** — Two new support tickets with the same root cause. Note it.
+4. **09:22** — One product crossed a milestone. Small celebration, fresh email.
+5. **09:30** — Session closed. The operator knows what to do today.
+
+Closing verb pair (reuse in onboarding copy, empty states, completion screens):
+
+> Stop stitching. Start operating.
+
+Whether the daily ritual gets an explicit "Morning" view or emerges naturally from the Overview is tracked as an open question in §17. Working recommendation: explicit Morning surface in Phase 5.
+
+## 20. Public Voice & Copy Fingerprint
+Adopt as the canonical LumaOps voice across all future surfaces (marketing, onboarding, empty states, error states).
+
+### 20.1 Tagline (one line)
+> The operations cockpit for indie founders. Open source, self-hosted.
+
+### 20.2 Promise (one paragraph)
+> LumaOps brings your repo, website, payments, funnel, and app telemetry into one self-hosted cockpit. What's shipping, converting, earning, breaking, growing — across every product you launch.
+
+### 20.3 Section verbs (the "X. One Y." fingerprint)
+- "Five signals. One room."
+- "Many sources. One rhythm."
+- "Every product. One studio."
+- "Five phases. One step at a time."
+- "Three commands. One cockpit."
+- "Sixteen minutes. Everything you need."
+
+The "X. One Y." construction is the LumaOps copy fingerprint. Prefer it for section headings, navigation hints, and empty-state titles whenever it fits honestly — never force it.
+
+### 20.4 The five public verbs
+Owned, repeated, never substituted: **shipped, converted, earned, broke, growing.**
+
+## 21. What LumaOps Is NOT (anti-features)
+Captured to prevent scope drift. LumaOps is explicitly **not**:
+
+- **Not Plausible / Fathom.** Single-domain web analytics.
+- **Not PostHog / Mixpanel.** Product analytics SDK focus.
+- **Not Linear / Height.** Project management.
+- **Not Vercel / Cloudflare.** Deployment / hosting.
+- **Not a Notion replacement.** LumaOps has lightweight per-product notes (pending §17 decision on operator-cockpit scope), not a wiki.
+- **Not a marketing CRM.** No email sequencing or lead nurturing.
+- **Not a customer-support product.** LumaOps surfaces tickets; it does not reply to them — unless an explicit decision expands scope to native support (§17).
+
+Any pull toward these adjacencies must go through §17 as an explicit scope decision, not in via feature creep.
