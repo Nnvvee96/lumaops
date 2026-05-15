@@ -30,3 +30,6 @@ pnpm-debug.log*
 # local artifacts
 tmp/
 artifacts/current/
+
+# Claude Code per-user permission grants — NOT shared via git
+.claude/settings.local.json
