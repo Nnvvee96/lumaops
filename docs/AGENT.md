@@ -45,6 +45,42 @@ Load [[LESSONS_LEARNED.md]] when any of the following are true:
 - a deploy / ship discipline question arises (§3 Shipping & Verification)
 - the same kind of regression appears across more than one project (candidate for new LESSONS entry — promote via distillation)
 
+## Compounding Loop (the canonical flow)
+The four learning nodes form a directed flow. Each node has a different cadence and a different scope. Lessons compound through this loop — short feedback at the bottom, long-term memory at the top.
+
+```
+              [project lifetime]                           [forever, cross-project]
+                                                                   ▲
+[every few actions]   [phase milestones]   [phase close]           │
+        │                    │                    │                │
+        ▼                    ▼                    ▼                │
+SESSION_LOGS  ──→  MEMORY (decisions,  ──→  SKILLS_COMPOUNDING  ──→ LESSONS_LEARNED
+(iterative          edge cases,         (project-specific          (canonical, generic,
+ chronicle:         invariants,         failure/success rules,     accumulating; lives
+ what we did)       flush logs)         project-scoped)            in global MD-Files/)
+        │                                       │                          │
+        │                                       │ distill at phase close   │
+        │                                       └──────────────────────────┘
+        │                                                                  │
+        └── recovery / handoff readers consult MEMORY + SESSION_LOGS       │
+                                                                           │
+        new project loads LESSONS_LEARNED as ambient context ──────────────┘
+```
+
+Cadence rules:
+
+- **SESSION_LOGS**: append a checkpoint every 3–5 major actions, not only at session close. Volatile sessions die without checkpoints.
+- **MEMORY**: persist whenever a non-obvious decision is made, a constraint is discovered, or compaction is approaching ([[CONSTRAINTS.md]] §2 Flush rule).
+- **SKILLS_COMPOUNDING**: append on every regression resolved and every novel success — same session, while context is fresh. Project-scoped; stays in the project repo.
+- **LESSONS_LEARNED**: append only via distillation at phase / project close. Strip project specifics. Stable §N.M IDs are referenced by [[IMPLEMENTATION_PLAN.md]] "Risks From Experience" blocks.
+
+Anti-patterns the loop prevents:
+
+- Knowledge that lives only in chat memory and dies on session reset (skip SESSION_LOGS).
+- Findings that stay project-bound and the next project rediscovers (skip distillation to LESSONS_LEARNED).
+- LESSONS_LEARNED that drifts into project-specific examples (skip abstraction).
+- SKILLS_COMPOUNDING that imports generic rules from LESSONS_LEARNED upstream (wrong direction; SKILLS is project-specific only).
+
 ## Hygiene Routing Triggers
 Load [[PROJECT_HYGIENE_PLAYBOOK.md]] when any of the following are true:
 - project contains generated outputs, caches, builds, release artifacts, models, datasets, or archives
@@ -83,8 +119,9 @@ Escalate hygiene review when:
 
 # PART 6: HEARTBEAT & SELF-HEALING
 - Vitality Check: Session start verifies SESSION_LOGS.md; flags stale jobs; runs /LESSONS for the active phase scope.
+- Session Log Cadence: append a SESSION_LOGS.md checkpoint after every 3–5 major actions (a slice shipped, a decision made, a blocker hit). Never wait for "session close" — sessions get interrupted.
 - Hygiene Check: Session close verifies no unclassified heavy artifacts or stale build residue remain in active worktrees.
-- Lessons Compounding: Session close also asks "did this session produce a finding that should be abstracted to [[LESSONS_LEARNED.md]]?" — if yes, promote it before close.
+- Lessons Compounding: Session close also asks "did this session produce a finding that should be abstracted to [[LESSONS_LEARNED.md]]?" — if yes, promote it before close. Project-specific findings go into SKILLS_COMPOUNDING.md first; abstractable ones get distilled upward at phase close.
 - Negative Constraints: On repeated hallucinations, add "Never" rule to TECHSTACK.md.
 - Diagnostics: Monitor uptime > output > efficiency; remediate patterns.
 

@@ -4,6 +4,7 @@ version: 1.0
 date: May 15, 2026
 status: ACTIVE / RECOVERY
 project: LumaOps
+dependencies: [[AGENT.md]], [[MEMORY.md]], [[SESSION_LOGS.md]], [[LESSONS_LEARNED.md]]
 ---
 # RECOVERY_KIT.md - Restoration Guide
 # PROJECT: LumaOps
