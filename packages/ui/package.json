@@ -1,0 +1,14 @@
+{
+  "name": "@lumaops/ui",
+  "version": "0.0.0",
+  "private": true,
+  "description": "LumaOps shared UI primitives (source-label, freshness-badge, connector-tile).",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p ."
+  }
+}
