@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* LumaOps design tokens land in S2D. Bare-bones reset for now. */
+
+html,
+body {
+  height: 100%;
+  background-color: #0c0b08;
+  color: #f3efe4;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+}

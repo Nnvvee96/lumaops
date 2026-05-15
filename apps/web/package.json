@@ -2,9 +2,31 @@
   "name": "@lumaops/web",
   "version": "0.0.0",
   "private": true,
-  "description": "LumaOps cockpit (Next.js App Router). Scaffolded in S2B.",
+  "description": "LumaOps cockpit (Next.js App Router).",
   "type": "module",
   "scripts": {
-    "typecheck": "tsc --noEmit -p ."
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start --port 3000",
+    "typecheck": "tsc --noEmit -p .",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^15.1.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.5",
+    "lucide-react": "^0.469.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.18.0",
+    "eslint-config-next": "^15.1.4",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17"
   }
 }
