@@ -65,7 +65,7 @@ Locked stance (do not relitigate inside a phase):
 
 ### PR Discipline
 - Title: `[S<id>] <summary>`.
-- Body must include: **Goal**, **What changed**, **DoD checklist** (copied from the sub-slice in this plan, ticked), **Test plan**, **Lessons applied** (which `[LL §N.M]` IDs were checked).
+- Body must include: **Goal**, **What changed**, **DoD checklist** (copied from the sub-slice in this plan, ticked), **Test plan**, **Lessons applied** (which `[LL §N.M]` IDs were checked), **Visual match against landing** (✓ + named landing section, or N/A if backend-only — see `CONCEPT.md` §12.5 Visual Fidelity Standard).
 - Merge strategy: squash merge (one slice = one commit on `main`).
 - Auto-delete branch on merge.
 - Required CI checks before merge: typecheck, lint, build, tests, gitleaks (see §1.2).
