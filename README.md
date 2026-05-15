@@ -1,8 +1,9 @@
 # LumaOps
 
 [![CI](https://github.com/Nnvvee96/lumaops/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Nnvvee96/lumaops/actions/workflows/ci.yml)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
-Open-source product operations cockpit for indie software.
+Open-source product operations cockpit for indie software. Licensed under **AGPL-3.0-only** — clone, self-host, modify freely. Run LumaOps as a network service for third parties, and your modifications must be open under the same license.
 
 LumaOps helps founders connect product signals from GitHub, Cloudflare, Stripe, telemetry, support, and custom events into one clean launch dashboard.
 

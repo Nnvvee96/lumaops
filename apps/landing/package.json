@@ -3,5 +3,5 @@
   "version": "0.0.0",
   "private": true,
   "description": "LumaOps marketing landing site (static, runtime React via CDN). Deployed at lumaops.app via Cloudflare Pages.",
-  "license": "MIT"
+  "license": "AGPL-3.0-only"
 }

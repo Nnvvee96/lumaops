@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Open-source product operations cockpit for indie software.",
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "repository": {
     "type": "git",
     "url": "https://github.com/Nnvvee96/lumaops.git"

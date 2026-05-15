@@ -161,7 +161,7 @@ Every component below has a free tier that covers MVP-scale traffic. Operator ca
 
 - **Database final pick** — Supabase is the default, but Turso (libSQL, no idle pause, 9 GB free), CockroachDB Serverless (Postgres-wire, 10 GB free, no pause), and Xata (15 GB free) remain on the eval list (`EXPANSION_BACKLOG.md` E-003). Decision when Phase B opens, based on schema-specific behaviour by then.
 - **Payment vendor** — Polar.sh and Lemon Squeezy both viable; pick based on Phase-B feedback (`EXPANSION_BACKLOG.md` E-002).
-- **License** — MIT today; AGPL upgrade is a strategic option if competitive hosting ever materialises (`EXPANSION_BACKLOG.md` E-001).
+- **License** — AGPL-3.0-only (upgraded from MIT on 2026-05-15 before Phase B opens, see `EXPANSION_BACKLOG.md` E-001 closure). Copyleft for network use prevents closed-source competing hosting.
 
 ### 7.5 Unit economics at $7/month
 
