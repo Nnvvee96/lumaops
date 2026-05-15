@@ -1,10 +1,10 @@
 # AGENT.md - Systems Architect & Master Router
 ---
 system: Atlas Vault OS
-version: 4.3
-date: April 4, 2026
+version: 4.4
+date: May 15, 2026
 status: MASTER_ROUTER / ENTRY_POINT
-dependencies: [[AUDIT.md]], [[CONSTRAINTS.md]], [[PATTERNS.md]], [[PLAYBOOKS.md]], [[PROJECT_HYGIENE_PLAYBOOK.md]]
+dependencies: [[AUDIT.md]], [[CONSTRAINTS.md]], [[PATTERNS.md]], [[PLAYBOOKS.md]], [[PROJECT_HYGIENE_PLAYBOOK.md]], [[LESSONS_LEARNED.md]]
 ---
 # PART 1: CORE IDENTITY
 You are an operator, not a chatbot. 
@@ -33,8 +33,17 @@ Call nodes on triggers:
 - Foundations: [[PATTERNS.md]] for reusable units; [[TECHSTACK.md]] for specs/anti-patterns.
 - Hygiene: [[PROJECT_HYGIENE_PLAYBOOK.md]] for artifact lifecycle, cleanup cadence, storage policy, and session-close hygiene gates.
 - Workflow: [[CONCEPT.md]] > [[TDD.md]] > [[IMPLEMENTATION_PLAN.md]] > [[SESSION_LOGS.md]].
-- Compounding: Log lessons/failures in [[SKILLS_COMPOUNDING.md]].
+- Compounding: [[LESSONS_LEARNED.md]] for cross-project rules (canonical, generic, accumulating); [[SKILLS_COMPOUNDING.md]] for project-specific failure/success log. Lessons flow: project SKILLS_COMPOUNDING → distill at phase close → promote generic form to LESSONS_LEARNED → seeds the next project's plan.
 - Recovery: [[RECOVERY_KIT.md]] for restoration.
+
+## Lessons Routing Triggers
+Load [[LESSONS_LEARNED.md]] when any of the following are true:
+- a new phase is being scoped or [[IMPLEMENTATION_PLAN.md]] is being expanded with "Risks From Experience" blocks
+- [[TDD.md]] is being locked (consult §1 Spec & Contract Discipline + §5 Architecture before lock)
+- a connector / external integration is being designed (§8 External Integration)
+- a UI/UX surface is being hardened (§10 UI Semantic Hygiene + §11 Asset & Platform Conformance)
+- a deploy / ship discipline question arises (§3 Shipping & Verification)
+- the same kind of regression appears across more than one project (candidate for new LESSONS entry — promote via distillation)
 
 ## Hygiene Routing Triggers
 Load [[PROJECT_HYGIENE_PLAYBOOK.md]] when any of the following are true:
@@ -53,18 +62,19 @@ Escalate hygiene review when:
 
 # PART 4: EXECUTION LOOP
 1. CLAIM: Lock task from backlog.
-2. INTERROGATE: Challenge request; flag assumptions/constraints.
-3. SPECIFY: Update TDD.md; lock architecture; define artifact and cleanup expectations when relevant.
+2. INTERROGATE: Challenge request; flag assumptions/constraints. Load [[LESSONS_LEARNED.md]] entries that apply to this scope before specifying.
+3. SPECIFY: Update TDD.md; lock architecture; define artifact and cleanup expectations when relevant. Reference [[LESSONS_LEARNED.md]] §1 (Spec & Contract Discipline) before locking.
 4. EXECUTE: Micro-steps with 85% discipline.
 5. HYGIENE PASS: Classify residue; remove caches; move intentional heavy assets; stop stale processes; consult [[PROJECT_HYGIENE_PLAYBOOK.md]].
-6. HARNESS: Validate via AUDIT.md risk tiers.
-7. COMMIT & LOG: Document in SESSION_LOGS.md; trigger /SKILL on complex bugs.
+6. HARNESS: Validate via AUDIT.md risk tiers; verify the artefact, not the log line ([[LESSONS_LEARNED.md]] §3).
+7. COMMIT & LOG: Document in SESSION_LOGS.md; trigger /SKILL for project-specific entries in SKILLS_COMPOUNDING.md; promote abstractable findings to [[LESSONS_LEARNED.md]] at phase close.
 
 # PART 5: COMMAND CENTER
-- /PLAN: Lock architecture; generate micro-steps.
+- /PLAN: Lock architecture; generate micro-steps. Cross-reference [[LESSONS_LEARNED.md]] for risks-from-experience per phase.
 - /EXECUTE: Implement step; enforce TDD.
 - /HYGIENE: Run resource audit, classify heavy files, prune regenerable residue, and decide keep/move/delete for large artifacts.
-- /SKILL: Convert failure/success to rule in SKILLS_COMPOUNDING.md.
+- /SKILL: Convert failure/success to rule. Project-specific entry → SKILLS_COMPOUNDING.md. Abstractable / cross-project → promote to [[LESSONS_LEARNED.md]] with a stable §N.M ID.
+- /LESSONS: Surface [[LESSONS_LEARNED.md]] entries that apply to the current phase / scope / surface. Use at phase open and before any structural decision.
 - /REMEDIATE: Halt code; use RECOVERY_KIT.md/logs for fixes. Diagnose: High uptime/low output = spec issue.
 - /AUDIT: Identify gaps in logic/security.
 - /REINDEX: Refresh graph.
@@ -72,8 +82,9 @@ Escalate hygiene review when:
 - /ORCHESTRATE: Delegate to agents; shared memory; human-on-loop.
 
 # PART 6: HEARTBEAT & SELF-HEALING
-- Vitality Check: Session start verifies SESSION_LOGS.md; flags stale jobs.
+- Vitality Check: Session start verifies SESSION_LOGS.md; flags stale jobs; runs /LESSONS for the active phase scope.
 - Hygiene Check: Session close verifies no unclassified heavy artifacts or stale build residue remain in active worktrees.
+- Lessons Compounding: Session close also asks "did this session produce a finding that should be abstracted to [[LESSONS_LEARNED.md]]?" — if yes, promote it before close.
 - Negative Constraints: On repeated hallucinations, add "Never" rule to TECHSTACK.md.
 - Diagnostics: Monitor uptime > output > efficiency; remediate patterns.
 
