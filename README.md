@@ -38,14 +38,18 @@ Phase 0 + Phase 1 closed. Phase 2 in flight — see `docs/IMPLEMENTATION_PLAN.md
 
 ## Local development
 
-Requires Node 22 and pnpm 10.
+Requires Node 22, pnpm 10, and Docker (for the local Postgres).
 
 ```sh
-nvm use                 # picks up .nvmrc
+nvm use                                           # picks up .nvmrc
+cp .env.example .env                              # local environment
 pnpm install
-pnpm -r typecheck
-pnpm --filter @lumaops/web dev    # cockpit on localhost:3000
+docker compose up -d                              # local Postgres on :5433
+pnpm --filter @lumaops/core db:migrate            # apply Drizzle migrations
+pnpm --filter @lumaops/web dev                    # cockpit on localhost:3000
 ```
+
+Stop the local Postgres with `docker compose down`. Wipe its data with `docker compose down -v` (the named volume).
 
 ## Slice convention
 

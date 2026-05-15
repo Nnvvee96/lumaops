@@ -1,0 +1,25 @@
+name: lumaops
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: lumaops-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: lumaops
+      POSTGRES_PASSWORD: lumaops
+      POSTGRES_DB: lumaops
+      # Keep the SQL collation deterministic across host platforms.
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --locale=C"
+    ports:
+      - "5433:5432"
+    volumes:
+      - lumaops-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lumaops -d lumaops"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  lumaops-postgres-data:
