@@ -6,9 +6,19 @@
   "type": "module",
   "main": "./src/index.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./github": "./src/github/index.ts"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit -p ."
+    "typecheck": "tsc --noEmit -p .",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@lumaops/core": "workspace:*",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
   }
 }
