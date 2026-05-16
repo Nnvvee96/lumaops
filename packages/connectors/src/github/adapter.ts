@@ -27,6 +27,7 @@ import {
   GitHubRateLimitSchema,
   GitHubUserSchema,
 } from "./schemas";
+import { syncGitHub } from "./sync";
 
 const CAPABILITIES: ConnectorCapabilities = {
   supports_realtime: false,
@@ -215,13 +216,17 @@ export function createGitHubAdapter(
     },
 
     async sync(
-      _config: ConnectorConfig,
-      _since: Date,
-      _signal?: AbortSignal,
+      config: ConnectorConfig,
+      since: Date,
+      signal?: AbortSignal,
     ): Promise<SyncResult> {
-      throw new Error(
-        "[github] sync() not yet implemented — lands in S4C (releases / issues / PRs / commits → events).",
-      );
+      const syncOpts: {
+        fetch?: typeof globalThis.fetch;
+        signal?: AbortSignal;
+      } = {};
+      if (fetchImpl) syncOpts.fetch = fetchImpl;
+      if (signal) syncOpts.signal = signal;
+      return syncGitHub(config, since, syncOpts);
     },
 
     capabilities(): ConnectorCapabilities {

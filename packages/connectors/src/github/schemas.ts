@@ -29,6 +29,23 @@ export const GitHubConfigSchema = z.object({
 
 export type GitHubConfig = z.infer<typeof GitHubConfigSchema>;
 
+/**
+ * Sync-time config. The framework runner (S4E) injects `workspace_id`,
+ * `product_id`, and `token` into the per-integration config bag before
+ * calling `adapter.sync`. Without these the adapter cannot emit a
+ * valid NormalizedEvent — fail fast at the boundary.
+ */
+export const GitHubSyncConfigSchema = z.object({
+  owner_repo: z.string().regex(/^[^/]+\/[^/]+$/, {
+    message: "owner_repo must be in 'owner/repo' format",
+  }),
+  workspace_id: z.string().uuid(),
+  product_id: z.string().uuid(),
+  token: z.string().min(1),
+});
+
+export type GitHubSyncConfig = z.infer<typeof GitHubSyncConfigSchema>;
+
 // ============================================================
 // /user — used by validateCredentials
 // ============================================================

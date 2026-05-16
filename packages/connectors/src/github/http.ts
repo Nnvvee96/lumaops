@@ -75,7 +75,8 @@ export async function apiGet<T>(
   }
 
   const start = now();
-  const res = await fetchImpl(`${GITHUB_API_ROOT}${path}`, init);
+  const url = path.startsWith("http") ? path : `${GITHUB_API_ROOT}${path}`;
+  const res = await fetchImpl(url, init);
   const latencyMs = Math.round(now() - start);
 
   if (!res.ok) {
@@ -98,6 +99,24 @@ export async function apiGet<T>(
   const json = (await res.json()) as unknown;
   const data = schema.parse(json);
   return { data, latencyMs, headers: res.headers };
+}
+
+/**
+ * Parse a single `Link` header value and return the URL marked `rel="next"`,
+ * or null when no next page exists. GitHub uses RFC 5988 link headers for
+ * pagination across all listing endpoints.
+ *
+ * Examples:
+ *   <https://api.github.com/.../issues?page=2>; rel="next", <...>; rel="last"
+ *   <...>; rel="prev", <...>; rel="first"            // last page — no next
+ */
+export function parseNextLink(linkHeader: string | null): string | null {
+  if (!linkHeader) return null;
+  for (const part of linkHeader.split(",")) {
+    const match = part.match(/^\s*<([^>]+)>\s*;\s*rel="([^"]+)"\s*$/);
+    if (match && match[2] === "next") return match[1] ?? null;
+  }
+  return null;
 }
 
 function now(): number {

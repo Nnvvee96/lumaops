@@ -28,6 +28,7 @@ Dwight/Kelly: Scanning/distributing.
 2026-05-15: Product name selected as LumaOps; domain `lumaops.app` purchased.
 2026-05-15: Locked product stance: open-source self-hostable browser app first; hosted app and desktop wrapper later.
 2026-05-15: Verified active repository files contain no remaining previous-codename references before local folder rename.
+2026-05-16: [S4C] GitHub sync — releases / issues / PRs / commits normalised into NormalizedEvent stream; per-source error isolation, Link-header pagination, abort threaded through every fetch, daily commit rollup. 54 connector tests green.
 
 ## 4. Crash Recovery
 State: [IDs/context].

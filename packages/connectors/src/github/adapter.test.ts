@@ -58,10 +58,13 @@ describe("GitHub adapter — contract surface", () => {
     expect(caps.rate_limits).toEqual([{ window: "hour", limit: 5000 }]);
   });
 
-  it("sync still throws — lands in S4C", async () => {
-    await expect(
-      createGitHubAdapter().sync({}, new Date()),
-    ).rejects.toThrow(/sync\(\) not yet implemented/);
+  it("sync rejects empty config with schema_drift (no throw)", async () => {
+    const result = await createGitHubAdapter({
+      fetch: mockFetch({}),
+    }).sync({}, new Date());
+    expect(result.events).toEqual([]);
+    expect(result.errors).toHaveLength(1);
+    expect(result.errors[0]?.kind).toBe("schema_drift");
   });
 });
 
