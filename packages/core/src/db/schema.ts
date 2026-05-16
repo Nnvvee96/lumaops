@@ -269,6 +269,13 @@ export const decisionLogEntry = pgTable("decision_log_entry", {
 // Inferred TypeScript types — for the rest of the codebase
 // ============================================================
 
+export type ProductStatus = (typeof productStatusEnum.enumValues)[number];
+export type ProductType = (typeof productTypeEnum.enumValues)[number];
+export type IntegrationProvider = (typeof integrationProviderEnum.enumValues)[number];
+export type IntegrationState = (typeof integrationStateEnum.enumValues)[number];
+export type CredentialStatus = (typeof credentialStatusEnum.enumValues)[number];
+export type EventSource = (typeof eventSourceEnum.enumValues)[number];
+
 export type Workspace = typeof workspace.$inferSelect;
 export type WorkspaceInsert = typeof workspace.$inferInsert;
 
