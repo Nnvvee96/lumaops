@@ -187,6 +187,90 @@ The distinction: anything that's a **feature** of the product stays OSS-feature-
 
 ---
 
+## E-013 — Connector Family Expansion: Social / SEO / Marketing Analytics
+
+**State**: parked (post-Phase-6).
+
+**Trigger**: Phase 6 closes with the foundational connectors (Cloudflare / Stripe / Custom-Tracking / App-Telemetry) — at which point the ConnectorAdapter contract has proven across enough providers to confidently extend into a broader provider family.
+
+**Why this exists**: Operator vision is that LumaOps is "allgegenwärtig" — every signal a founder cares about converges into the cockpit, not just product-code signals (GitHub) + revenue (Stripe). For an indie founder shipping a consumer-facing product, **marketing signals are often the higher-value half**. SEO performance, social reach, content velocity, ad spend — those are the daily-ritual signals as much as releases and revenue.
+
+**Candidate providers** (each follows the per-connector template from IMPLEMENTATION_PLAN §Phase-6):
+
+Search / SEO:
+- Google Search Console (impressions, clicks, position, indexed pages)
+- Plausible Analytics
+- Google Analytics 4
+- Ahrefs / SEMrush (if their API costs make sense)
+
+Social organic:
+- Instagram Graph API (reels insights: plays, engagement, reach per post)
+- TikTok for Developers (video views, engagement rate, follower growth)
+- YouTube Data API (channel + per-video performance)
+- X / Twitter API v2 (tweet impressions, engagement)
+- LinkedIn API (company-page + post analytics)
+- Bluesky AT Protocol (early-stage, narrow scope, OSS-friendly)
+
+Social paid (later):
+- Meta Marketing API (Facebook + Instagram ads)
+- TikTok Ads API
+- Google Ads API
+- X Ads API
+
+Content velocity / dev-tangent:
+- Substack (if they expose API by then)
+- ConvertKit / Beehiiv (newsletter open rates)
+- YouTube creator dashboard for long-form
+- Discord / Slack analytics for community-led products
+
+**Critical constraint** ([LL §8.4]): each social platform has its own credential model + ToS + rate limits + freshness windows. Some (Instagram Graph) require a Facebook Business account. Some (TikTok) have notoriously restrictive APIs. The per-connector template must be honest about each platform's coverage and limits in the UI tile — "Plausible: every page view, refreshed hourly" vs "Instagram Graph: 24-hour delay, weekly aggregate only" are very different operational realities.
+
+**Sequencing within E-013**:
+1. **Search Console** first — high signal, easy API, free for indie scale
+2. **Plausible / GA4** — analytics primary
+3. **Instagram Graph + TikTok** — visual content metrics
+4. **YouTube / X / LinkedIn** — secondary social
+5. **Paid ads** — last, because ad-spend without product-market-fit is a known anti-pattern
+
+**Out of scope of this entry**:
+- Posting / scheduling automation (LumaOps surfaces signals, doesn't publish — that's Buffer/Hootsuite territory; CONCEPT §21 anti-features applies)
+- Influencer-tracking (single-domain product, not LumaOps's job)
+- Sentiment analysis (derived; pushes back to Phase 7 Intelligence)
+
+---
+
+## E-012 — Token-via-Dashboard (replace .env workflow for end-users)
+
+**State**: parked (mandatory before Phase B opens — same gate as E-011).
+
+**Trigger**: Phase 4 closes OR Phase B prep starts.
+
+**The gap**:
+- Today, configuring the GitHub connector requires editing `.env` at the repo root and restarting `pnpm dev`. That works for a developer maintainer but is unacceptable for a closed-beta user, a hosted-variant user, or anyone setting up their own LumaOps instance who does NOT live in a terminal.
+- The operator's explicit direction: "**alles über den dashboard testen, nichts über terminal**." Every connector — GitHub, Cloudflare, Stripe, social, SEO, anything later — must be wirable, testable, and revocable through the cockpit UI alone.
+
+**What needs to ship**:
+1. **Encrypted secret storage** in DB (or in a vault — depends on hosted-vs-local). For local self-hosted: encrypted-at-rest in Postgres using a key from `LUMAOPS_ENCRYPTION_KEY` env (one bootstrap secret, but exactly one — and it's not the integration token). For Phase B/C hosted: KMS-backed (AWS KMS or Cloudflare-secrets-style).
+2. **Add Integration UI** — `/integrations/new` route. Connector picker, then a provider-specific form (e.g. for GitHub: paste token, paste owner/repo). Token gets encrypted server-side immediately on submit, fingerprint persists, plaintext never round-trips back to the client.
+3. **Token rotation UI** — per integration tile, "Rotate token" button opens a modal, paste new token, validates against the provider, swaps the encrypted blob.
+4. **Token revocation UI** — "Disconnect" button on each tile; clears the encrypted blob, sets state to "pending", credential_status to "missing".
+5. **Audit log** — every secret access logged with timestamp + integration_id (NOT the token). Surfaced as a tab in Settings or per-integration.
+
+**Why not in Phase 4**:
+- S4B took the right MVP shortcut (read from .env) so the GitHub adapter could ship + be live-testable today without first building a secrets-vault.
+- Adding encrypted DB storage + the AddIntegration UI is a real Phase-5 slice (or its own mini-phase between 4 and 5). Doing it inside S4B would have inflated the slice 3x and delayed working GitHub data.
+
+**What E-012 does NOT include**:
+- Multi-user secret sharing (Team Plan E-004 territory)
+- HSM integration (overkill for an indie tool; KMS is enough)
+- Token expiry monitoring (separate concern; could be a later sub-ticket)
+
+**Connection to other backlog entries**:
+- Hard prerequisite for E-013 (social/SEO connectors) — those provider tokens are even more sensitive than GitHub PATs (some grant ad-spend authority).
+- Hard prerequisite for Phase B (closed beta) — beta testers cannot edit .env on the operator's machine.
+
+---
+
 ## E-011 — First-Run Studio Onboarding (no hardcoded seed identity)
 
 **State**: parked (mandatory before Phase B opens).
