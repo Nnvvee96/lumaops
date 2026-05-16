@@ -33,6 +33,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { FreshnessBadge, SourceLabel } from "@lumaops/ui";
 import { notFound } from "next/navigation";
 
 export default function PrimitivesPage() {
@@ -146,6 +147,88 @@ export default function PrimitivesPage() {
               </SheetHeader>
             </SheetContent>
           </Sheet>
+        </Demo>
+
+        <Demo label="SourceLabel — S3D, mirrors landing .num-tag / .micro pattern">
+          <div className="flex flex-col gap-3">
+            <SourceLabel source="github" syncedAt={new Date()} />
+            <SourceLabel
+              source="cloudflare"
+              syncedAt={new Date(Date.now() - 5 * 60_000)}
+              detail="zone:lumaops.app"
+            />
+            <SourceLabel
+              source="stripe"
+              syncedAt={new Date(Date.now() - 60 * 60_000)}
+              size="micro"
+            />
+            <SourceLabel source="seed" syncedAt={new Date()} detail="NOESIS.Tools" />
+            <SourceLabel
+              source="manual"
+              syncedAt={new Date()}
+              detail="/Users/operator/somefile.txt"
+            />
+            <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-low">
+              ↑ The last one has an absolute path in `detail`. stripAbsolutePath
+              renders it as the basename only.
+            </p>
+          </div>
+        </Demo>
+
+        <Demo label="FreshnessBadge — S3D, all six TDD §5.2 states">
+          <div className="flex flex-col gap-3">
+            <FreshnessBadge
+              freshness={{
+                kind: "observed",
+                last_observed_at: new Date(Date.now() - 3 * 60_000),
+                source_id: "github:repo-123",
+              }}
+            />
+            <FreshnessBadge
+              freshness={{
+                kind: "derived",
+                last_observed_at: new Date(Date.now() - 30 * 60_000),
+                source_id: "github:repo-123",
+                derivation: "weekly_visits = sum(page_view in 7d)",
+              }}
+            />
+            <FreshnessBadge
+              freshness={{
+                kind: "inferred",
+                last_observed_at: new Date(Date.now() - 2 * 60 * 60_000),
+                source_id: "github:repo-123",
+                confidence: 0.72,
+              }}
+            />
+            <FreshnessBadge
+              freshness={{
+                kind: "stale",
+                last_observed_at: new Date(Date.now() - 24 * 60 * 60_000),
+                threshold_seconds: 3_600,
+                actual_age_seconds: 86_400,
+              }}
+            />
+            <FreshnessBadge
+              freshness={{ kind: "missing", reason: "no_integration" }}
+            />
+            <FreshnessBadge
+              freshness={{ kind: "missing", reason: "integration_not_connected" }}
+            />
+            <FreshnessBadge
+              freshness={{ kind: "missing", reason: "no_data_yet" }}
+            />
+            <FreshnessBadge
+              freshness={{
+                kind: "mock",
+                until: new Date("2026-12-31T23:59:59.000Z"),
+              }}
+            />
+            <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-low">
+              ↑ Observed pulses live. Stale is red-bordered. Mock surfaces with
+              a dev-only ribbon — production guard in calculateFreshness blocks
+              it at runtime.
+            </p>
+          </div>
         </Demo>
       </section>
     </main>
