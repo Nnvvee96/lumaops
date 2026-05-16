@@ -10,7 +10,8 @@
     "./db": "./src/db/index.ts",
     "./db/schema": "./src/db/schema.ts",
     "./db/client": "./src/db/client.ts",
-    "./freshness": "./src/freshness/index.ts"
+    "./freshness": "./src/freshness/index.ts",
+    "./metrics": "./src/metrics/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit -p .",
