@@ -1,13 +1,26 @@
 /**
- * LumaOps local seed. Idempotent — running it twice is a no-op.
+ * ============================================================
+ *  ⚠️  LumaOps MAINTAINER DEMO DATA — NOT FOR END-USERS  ⚠️
+ * ============================================================
  *
- * Populates the canonical Studio example from CONCEPT §5.3
- * (Navyug Studio with four real proving-ground products), plus the
- * NOESIS GitHub integration in `pending` state and a small funnel
- * of seeded events for NOESIS.Tools so /overview and /products have
- * something to render once S3G wires the reads.
+ * This file is for the LumaOps maintainer's own development workflow.
+ * It populates the canonical Studio example from CONCEPT §5.3
+ * (Navyug — Indie Studio with four real proving-ground products:
+ * NOESIS.Tools, ApplyIQ, Planora, OHARA) plus an example NOESIS
+ * funnel of seeded events.
  *
- * Run:  pnpm --filter @lumaops/core seed
+ * Anyone running their own LumaOps instance — whether self-hosted,
+ * cloned for personal use, or running it in the hosted Phase B/C
+ * beta — should NOT execute this. A fresh clone gives an empty
+ * cockpit; the operator creates their own Studio + products via
+ * the first-run UI (EXPANSION_BACKLOG E-011) once that lands.
+ *
+ * Idempotent — running it twice is a no-op. Restricted to the
+ * `seed:demo` script (intentionally not the default `seed`) so the
+ * filename + invocation both make the maintainer-only intent
+ * unmistakable.
+ *
+ * Run:  pnpm --filter @lumaops/core seed:demo
  * Pre:  docker compose up -d  &&  pnpm --filter @lumaops/core db:migrate
  */
 

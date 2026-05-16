@@ -47,11 +47,20 @@ cp .env.example .env                              # local environment
 pnpm install
 docker compose up -d                              # local Postgres on :5433
 pnpm --filter @lumaops/core db:migrate            # apply Drizzle migrations
-pnpm --filter @lumaops/core seed                  # seed Navyug Studio + 4 products + NOESIS funnel
 pnpm --filter @lumaops/web dev                    # cockpit on localhost:3000
 ```
 
-The seed is idempotent — running it twice is a no-op.
+The cockpit starts empty by design — no Studio, no products. Create your own Studio + add products via the first-run UI once it lands (see `docs/EXPANSION_BACKLOG.md` E-011). Until then, end-users have no way to populate from the UI; that's a known gap.
+
+### LumaOps maintainer only — demo data
+
+If you are the LumaOps maintainer working on the codebase itself and want example content in your local DB:
+
+```sh
+pnpm --filter @lumaops/core seed:demo
+```
+
+This loads the maintainer's own Studio ("Navyug — Indie Studio") with four proving-ground products + an example NOESIS funnel. **Anyone else should never run this.** Filename, script name, and the inline banner all make the maintainer-only intent explicit so it cannot run by accident.
 
 Stop the local Postgres with `docker compose down`. Wipe its data with `docker compose down -v` (the named volume).
 
