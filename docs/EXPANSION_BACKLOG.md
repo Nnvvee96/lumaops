@@ -187,6 +187,62 @@ The distinction: anything that's a **feature** of the product stays OSS-feature-
 
 ---
 
+## E-011 — First-Run Studio Onboarding (no hardcoded seed identity)
+
+**State**: parked (mandatory before Phase B opens).
+
+**Trigger**: Phase 4 closes OR Phase B prep starts — whichever comes first.
+
+**The gap**:
+- Today the only way to create a Workspace + Products is to run
+  `pnpm --filter @lumaops/core seed`. The seed hardcodes "Navyug —
+  Indie Studio" + four operator-specific products.
+- A fresh clone with no seed shows honest empty states ("No studio
+  configured — run pnpm core seed"). That works for developers.
+- It does **not** work for any closed-beta user, hosted-variant user,
+  or anyone who isn't the operator. A non-developer cloning the repo
+  would have to edit `seed.ts` to use their own names.
+
+**What needs to ship**:
+1. **First-run setup screen** — when no Workspace row exists, the
+   cockpit shows a setup form instead of the empty-states. Fields:
+   studio name (required), timezone (defaults to browser locale),
+   default currency (defaults to EUR for DE-shipped builds, USD
+   otherwise), default date range. Form posts via Server Action to
+   create the Workspace row.
+2. **Add Product flow** — once a studio exists, an "Add product"
+   button on `/products` opens a panel: name, slug (auto-derived
+   from name with edit override), product_type, status, optional
+   GitHub repo, optional website domain. Server Action creates the
+   row + sets `primary_metric_key` via getDefaultMetricForType().
+3. **Optional**: GitHub-import shortcut — paste a repo URL, LumaOps
+   pre-fills name/slug/website/repo from the repo metadata (depends
+   on Phase 4 GitHub adapter being live for the auth handshake).
+4. **Seed becomes a dev convenience, not the default path.**
+   `seed.ts` stays for local development to skip the manual steps.
+   Documented as "for contributors, not for end-users."
+
+**Why not in Phase 3**:
+- Add-Product UI requires write paths from the UI (Server Actions
+  against the schema). Phase 3 was explicitly read-only per the
+  IMPLEMENTATION_PLAN scope.
+- Smart UI flow benefits from real GitHub data (Phase 4 GitHub
+  Connector) so the GitHub-import shortcut works end-to-end. Doing
+  Add-Product UI now without GitHub auto-fill ships a worse version
+  of the same feature.
+
+**Out of scope for E-011**:
+- Multi-user invitations (Phase 4+ if Team Plan E-004 opens)
+- Studio renaming after creation (covered by basic edit panel; not
+  novel UX)
+- Public Studio URLs (Decision G — defer, see E-004 + Phase 4 spec)
+
+**Risk**: leaving this parked too long means we cannot pilot Phase B
+(closed hosted beta) — any beta user needs a way to create their
+own Studio. Promote to `ready-to-pick` as soon as Phase 4 closes.
+
+---
+
 ## E-010 — Native Cohort Tracking Engine (CONCEPT §17 Decision J)
 
 **State**: parked.
