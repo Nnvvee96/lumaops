@@ -1,5 +1,7 @@
 import { Menu } from "lucide-react";
 
+import type { Product } from "@lumaops/core";
+
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -11,7 +13,12 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 import { SidebarContent } from "./sidebar";
 
-export function Topbar() {
+export interface TopbarProps {
+  readonly products: readonly Product[];
+  readonly studioName?: string | null;
+}
+
+export function Topbar({ products, studioName }: TopbarProps) {
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-paper/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-paper/80 lg:px-6">
       {/* Mobile burger */}
@@ -29,19 +36,17 @@ export function Topbar() {
           </SheetTrigger>
           <SheetContent side="left" className="w-72 p-0">
             <SheetTitle className="sr-only">LumaOps navigation</SheetTitle>
-            <SidebarContent />
+            <SidebarContent products={products} studioName={studioName ?? null} />
           </SheetContent>
         </Sheet>
       </div>
 
       <div className="flex-1" />
 
-      {/* Topbar controls — full date range / channel / sync status placeholders
-          land alongside real data in S3/S4. For now they're labelled empty
-          states ([LL §8.4]) to keep the topbar honest. */}
       <div className="flex items-center gap-2">
         <span className="hidden font-mono text-[10px] uppercase tracking-[0.14em] text-ink-low sm:inline">
-          No integrations · seed in S3F
+          {products.length} {products.length === 1 ? "product" : "products"} ·
+          integrations pending
         </span>
         <ThemeToggle />
       </div>

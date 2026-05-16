@@ -25,6 +25,9 @@ const instrumentSerif = Instrument_Serif({
   display: "swap",
 });
 
+// AppShell reads from Postgres so every page render is dynamic.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "LumaOps — cockpit",
   description:
@@ -35,7 +38,7 @@ export const metadata: Metadata = {
 // cockpit and landing read as one identity with no flash.
 const themeBootScript = `(function(){try{var t=localStorage.getItem('lumaops-theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: ReactNode;
