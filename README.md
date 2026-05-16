@@ -47,8 +47,11 @@ cp .env.example .env                              # local environment
 pnpm install
 docker compose up -d                              # local Postgres on :5433
 pnpm --filter @lumaops/core db:migrate            # apply Drizzle migrations
+pnpm --filter @lumaops/core seed                  # seed Navyug Studio + 4 products + NOESIS funnel
 pnpm --filter @lumaops/web dev                    # cockpit on localhost:3000
 ```
+
+The seed is idempotent — running it twice is a no-op.
 
 Stop the local Postgres with `docker compose down`. Wipe its data with `docker compose down -v` (the named volume).
 
