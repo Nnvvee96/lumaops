@@ -17,6 +17,7 @@
     "react-dom": "^19.0.0",
     "@lumaops/ui": "workspace:*",
     "@lumaops/core": "workspace:*",
+    "@lumaops/connectors": "workspace:*",
     "drizzle-orm": "^0.38.3",
     "server-only": "^0.0.1",
     "clsx": "^2.1.1",
