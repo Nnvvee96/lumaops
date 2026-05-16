@@ -13,7 +13,7 @@ const nextConfig = {
   // directly (no build step).
   // serverExternalPackages prevents Next from trying to bundle pg / drizzle for the server runtime
   serverExternalPackages: ["pg", "drizzle-orm"],
-  transpilePackages: ["@lumaops/ui", "@lumaops/core"],
+  transpilePackages: ["@lumaops/ui", "@lumaops/core", "@lumaops/connectors"],
   // Pin the workspace root so Next.js doesn't pick the wrong lockfile
   // when running inside a git worktree (or any sibling checkout).
   outputFileTracingRoot: join(__dirname, "..", ".."),

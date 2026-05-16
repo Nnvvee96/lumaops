@@ -1,14 +1,16 @@
 /**
- * GitHub ConnectorAdapter — S4A scaffold.
+ * GitHub ConnectorAdapter — S4B.
  *
- * Capabilities() is final (locked from TDD §7 + GitHub REST v3 rate
- * limits). validateCredentials, health, and sync are stubbed to throw
- * — they ship in S4B (auth/health) and S4C (sync).
+ * validateCredentials and health now hit the real GitHub REST v3 API.
+ * sync still throws "not yet implemented" — that lands in S4C.
  *
- * The factory returns a frozen object that satisfies ConnectorAdapter,
- * so the type signature is exercised at compile time today even
- * though the runtime calls land in the next slices.
+ * Token handling discipline ([LL §10.8]):
+ * - Token never appears in any return value.
+ * - Token never appears in any log line (caller's responsibility too).
+ * - Only the fingerprint (sha256-prefix) leaves the adapter.
  */
+
+import { createHash } from "node:crypto";
 
 import type {
   ConnectorAdapter,
@@ -19,77 +21,52 @@ import type {
   SyncResult,
 } from "@lumaops/core";
 
-import { GitHubConfigSchema } from "./schemas";
+import { apiGet, GitHubHTTPError } from "./http";
+import {
+  GitHubConfigSchema,
+  GitHubRateLimitSchema,
+  GitHubUserSchema,
+} from "./schemas";
 
 const CAPABILITIES: ConnectorCapabilities = {
   supports_realtime: false,
   supports_backfill: true,
   required_scopes: ["repo", "read:user"],
   rate_limits: [{ window: "hour", limit: 5000 }],
-  // GitHub public API — payload leaves the device. "hosted" makes the
-  // privacy class structural per [LL §8.1].
   privacy_class: "hosted",
 };
 
-const NOT_YET_IMPLEMENTED = (method: string): Error =>
-  new Error(
-    `[github] ${method}() not yet implemented — S4A scaffolds only the contract + capabilities + Zod schemas. ` +
-      `auth/health ship in S4B; sync ships in S4C.`,
-  );
+const REQUIRED_SCOPES: readonly string[] = CAPABILITIES.required_scopes;
 
 export interface GitHubAdapterOptions {
-  /**
-   * Override fetch for tests / non-Node environments. Defaults to
-   * globalThis.fetch which is available in Node 22 LTS and all
-   * modern browsers / runtimes.
-   */
+  /** Inject a fetch implementation — used in tests and non-Node runtimes. */
   readonly fetch?: typeof globalThis.fetch;
 }
 
-export function createGitHubAdapter(
-  _options: GitHubAdapterOptions = {},
-): ConnectorAdapter {
-  return Object.freeze({
-    provider: "github" as const,
-    variant: "public",
+/**
+ * The adapter expects config to be an object with at least:
+ *   { owner_repo: string, token: string }
+ * The framework reads `token` from env (LUMAOPS_GITHUB_TOKEN) and
+ * merges it into the integration.config bag before calling. Storing
+ * the token in DB is intentionally avoided — only the fingerprint
+ * lands in `integration.credential_fingerprint`.
+ */
+type GitHubFullConfig = ConnectorConfig & { token?: unknown };
 
-    async validateCredentials(
-      _config: ConnectorConfig,
-    ): Promise<CredentialValidation> {
-      throw NOT_YET_IMPLEMENTED("validateCredentials");
-    },
-
-    async health(
-      _config: ConnectorConfig,
-      _signal?: AbortSignal,
-    ): Promise<ConnectorHealth> {
-      throw NOT_YET_IMPLEMENTED("health");
-    },
-
-    async sync(
-      _config: ConnectorConfig,
-      _since: Date,
-      _signal?: AbortSignal,
-    ): Promise<SyncResult> {
-      throw NOT_YET_IMPLEMENTED("sync");
-    },
-
-    capabilities(): ConnectorCapabilities {
-      return CAPABILITIES;
-    },
-  });
+function extractToken(config: GitHubFullConfig): string | null {
+  const t = config["token"];
+  if (typeof t !== "string" || t.length === 0) return null;
+  return t;
 }
 
-/**
- * Parse + validate a raw integration.config bag into a typed GitHubConfig.
- * Adapters MUST call this before consuming config (no-implicit-shape rule).
- * Throws if the config is malformed — caller catches and reports as
- * ConnectorError.kind="schema_drift" or "missing".
- */
-export function parseGitHubConfig(raw: ConnectorConfig): {
-  ok: true;
-  config: ReturnType<typeof GitHubConfigSchema.parse>;
-} | { ok: false; message: string } {
+export function fingerprint(token: string): string {
+  const hash = createHash("sha256").update(token).digest("hex").slice(0, 12);
+  return `sha:${hash}`;
+}
+
+export function parseGitHubConfig(
+  raw: ConnectorConfig,
+): { ok: true; config: ReturnType<typeof GitHubConfigSchema.parse> } | { ok: false; message: string } {
   const result = GitHubConfigSchema.safeParse(raw);
   if (result.success) return { ok: true, config: result.data };
   return {
@@ -98,4 +75,181 @@ export function parseGitHubConfig(raw: ConnectorConfig): {
       .map((e) => `${e.path.join(".")}: ${e.message}`)
       .join("; ")}`,
   };
+}
+
+export function createGitHubAdapter(
+  options: GitHubAdapterOptions = {},
+): ConnectorAdapter {
+  const fetchImpl = options.fetch ?? globalThis.fetch;
+
+  return Object.freeze({
+    provider: "github" as const,
+    variant: "public",
+
+    async validateCredentials(
+      config: ConnectorConfig,
+    ): Promise<CredentialValidation> {
+      const cfg = config as GitHubFullConfig;
+      const token = extractToken(cfg);
+      if (!token) {
+        return {
+          ok: false,
+          reason: "missing",
+          message:
+            "No GitHub token provided. Set LUMAOPS_GITHUB_TOKEN in your .env.",
+        };
+      }
+
+      try {
+        const opts: { fetch?: typeof globalThis.fetch } = {};
+        if (fetchImpl) opts.fetch = fetchImpl;
+        const { headers } = await apiGet(
+          "/user",
+          token,
+          GitHubUserSchema,
+          opts,
+        );
+
+        const scopes = parseScopesHeader(headers.get("X-OAuth-Scopes"));
+        const missing = REQUIRED_SCOPES.filter(
+          (req) => !scopeSatisfied(scopes, req),
+        );
+
+        // Classic PATs expose X-OAuth-Scopes; fine-grained PATs return
+        // an empty header. Only enforce the scope check when the
+        // header actually says something.
+        if (scopes.length > 0 && missing.length > 0) {
+          return {
+            ok: false,
+            reason: "insufficient_scope",
+            message: `Token is missing required scopes: ${missing.join(", ")}. Grant them in GitHub → Settings → Developer settings → Personal access tokens.`,
+          };
+        }
+
+        return {
+          ok: true,
+          scopes,
+          fingerprint: fingerprint(token),
+        };
+      } catch (err) {
+        if (err instanceof GitHubHTTPError) {
+          if (err.status === 401) {
+            return {
+              ok: false,
+              reason: "invalid",
+              message:
+                err.body?.message ??
+                "GitHub rejected the token (401 Unauthorized). The token may be expired or revoked.",
+            };
+          }
+          if (err.status === 403) {
+            const remaining = err.headers.get("X-RateLimit-Remaining");
+            if (remaining === "0") {
+              return {
+                ok: false,
+                reason: "invalid",
+                message:
+                  "Token validation hit the rate limit (X-RateLimit-Remaining=0). Wait for the reset and try again.",
+              };
+            }
+            return {
+              ok: false,
+              reason: "insufficient_scope",
+              message:
+                err.body?.message ??
+                "GitHub returned 403 Forbidden — token likely lacks required scopes.",
+            };
+          }
+          if (err.status === 404) {
+            return {
+              ok: false,
+              reason: "revoked",
+              message:
+                "GitHub returned 404 for /user — token may have been revoked at the GitHub side.",
+            };
+          }
+          return {
+            ok: false,
+            reason: "invalid",
+            message: `Unexpected GitHub response (${err.status}): ${err.message}`,
+          };
+        }
+        return {
+          ok: false,
+          reason: "invalid",
+          message: `Validation failed: ${(err as Error).message}`,
+        };
+      }
+    },
+
+    async health(
+      config: ConnectorConfig,
+      signal?: AbortSignal,
+    ): Promise<ConnectorHealth> {
+      const cfg = config as GitHubFullConfig;
+      const token = extractToken(cfg) ?? undefined;
+      try {
+        const opts: { fetch?: typeof globalThis.fetch; signal?: AbortSignal } = {};
+        if (fetchImpl) opts.fetch = fetchImpl;
+        if (signal) opts.signal = signal;
+        const { data, latencyMs } = await apiGet(
+          "/rate_limit",
+          token,
+          GitHubRateLimitSchema,
+          opts,
+        );
+        return {
+          reachable: true,
+          latency_ms: latencyMs,
+          rate_limit_remaining: data.resources.core.remaining,
+          rate_limit_reset_at: new Date(data.resources.core.reset * 1000),
+        };
+      } catch {
+        return {
+          reachable: false,
+          latency_ms: 0,
+          rate_limit_remaining: null,
+          rate_limit_reset_at: null,
+        };
+      }
+    },
+
+    async sync(
+      _config: ConnectorConfig,
+      _since: Date,
+      _signal?: AbortSignal,
+    ): Promise<SyncResult> {
+      throw new Error(
+        "[github] sync() not yet implemented — lands in S4C (releases / issues / PRs / commits → events).",
+      );
+    },
+
+    capabilities(): ConnectorCapabilities {
+      return CAPABILITIES;
+    },
+  });
+}
+
+// ============================================================
+// Scope-header parsing helpers
+// ============================================================
+
+function parseScopesHeader(value: string | null): readonly string[] {
+  if (!value) return [];
+  return value
+    .split(",")
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
+}
+
+/**
+ * GitHub scope check: a token with `repo` implicitly has the read
+ * sub-scopes. We treat any scope matching `<required>` or starting
+ * with `<required>:` as satisfying.
+ */
+function scopeSatisfied(
+  granted: readonly string[],
+  required: string,
+): boolean {
+  return granted.some((s) => s === required || s.startsWith(`${required}:`));
 }

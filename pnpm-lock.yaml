@@ -16,6 +16,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@lumaops/connectors':
+        specifier: workspace:*
+        version: link:../../packages/connectors
       '@lumaops/core':
         specifier: workspace:*
         version: link:../../packages/core
