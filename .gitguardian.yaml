@@ -1,0 +1,26 @@
+# GitGuardian config for LumaOps.
+# https://docs.gitguardian.com/ggshield-docs/reference/configuration
+#
+# Allowlists are for local-development placeholders that GitGuardian
+# correctly recognises as credentials in shape but that carry no real
+# secret. These never reach a deployed cockpit — production secrets
+# live in operator-owned .env on self-host or in Supabase / Polar.sh
+# vaults on hosted (Phase B+).
+
+version: 2
+
+secret:
+  # Files where local-development placeholders intentionally live.
+  # The compose file ships with `lumaops:lumaops` as the dev Postgres
+  # credentials; .env.example pins the same DATABASE_URL.
+  ignored_paths:
+    - "docker-compose.yml"
+    - ".env.example"
+
+  # Match patterns that are LumaOps-specific local-dev placeholders.
+  # Each match must include the exact string `lumaops:lumaops` —
+  # narrow enough that a real leaked credential cannot slip through
+  # under this exception.
+  ignored_matches:
+    - name: "Local Postgres dev placeholder (lumaops:lumaops)"
+      match: "lumaops:lumaops"
