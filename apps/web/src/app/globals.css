@@ -133,3 +133,9 @@
 
 /* Selection — paper/ink invert (matches landing) */
 ::selection { background: var(--ink); color: var(--paper); }
+
+/* FreshnessBadge live-dot pulse (mirrors landing .pill.live .dot animation). */
+@keyframes freshness-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
