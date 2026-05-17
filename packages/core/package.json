@@ -12,7 +12,8 @@
     "./db/client": "./src/db/client.ts",
     "./freshness": "./src/freshness/index.ts",
     "./metrics": "./src/metrics/index.ts",
-    "./connectors": "./src/connectors/index.ts"
+    "./connectors": "./src/connectors/index.ts",
+    "./sync": "./src/sync/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit -p .",

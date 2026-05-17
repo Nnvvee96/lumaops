@@ -1,9 +1,13 @@
 import { revalidatePath } from "next/cache";
 
-import type { Integration } from "@lumaops/core";
+import type { Integration, IntegrationState } from "@lumaops/core";
 
 import { getStudio, listIntegrations } from "@/lib/data";
 import { testIntegrationConnection } from "@/lib/connectors";
+import { effectiveState } from "@/lib/integration-view";
+
+import { SyncNowButton } from "./sync-now-button";
+import { IntegrationsRefresher } from "./integrations-refresher";
 
 export const dynamic = "force-dynamic";
 
@@ -25,9 +29,19 @@ export default async function IntegrationsPage() {
   }
 
   const integrations = await listIntegrations(studio.id);
+  const now = new Date();
+  const schedules = integrations
+    .filter((i) => i.lastSyncAt !== null)
+    .map((i) => ({
+      integrationId: i.id,
+      secondsUntilStale:
+        i.freshnessThresholdSeconds -
+        Math.floor((now.getTime() - new Date(i.lastSyncAt!).getTime()) / 1000),
+    }));
 
   return (
     <section className="mx-auto max-w-5xl px-6 py-12 lg:px-10 lg:py-16">
+      <IntegrationsRefresher schedules={schedules} />
       <NumTag label="Integrations" />
       <h1 className="mt-4 text-4xl font-light tracking-[-0.03em] lg:text-5xl">
         Bring your own tokens. <span className="font-serif italic">One</span> cockpit.
@@ -61,6 +75,8 @@ function IntegrationTile({ integration }: { integration: Integration }) {
     revalidatePath("/integrations");
   }
 
+  const displayState = effectiveState(integration);
+
   return (
     <li className="flex flex-col gap-4 bg-paper-1 p-6">
       <div className="flex items-start justify-between gap-4">
@@ -70,7 +86,7 @@ function IntegrationTile({ integration }: { integration: Integration }) {
           </p>
           <p className="mt-2 text-lg text-ink">{integration.displayName}</p>
         </div>
-        <StatePill state={integration.state} />
+        <StatePill state={displayState} />
       </div>
 
       <dl className="grid grid-cols-1 gap-y-2 text-xs">
@@ -96,14 +112,19 @@ function IntegrationTile({ integration }: { integration: Integration }) {
         ) : null}
       </dl>
 
-      <form action={testConnection}>
-        <button
-          type="submit"
-          className="inline-flex h-9 items-center rounded-md border border-line-2 bg-paper-2 px-4 font-mono text-[11px] uppercase tracking-[0.12em] text-ink transition-colors hover:border-ink hover:bg-paper-1"
-        >
-          Test connection
-        </button>
-      </form>
+      <div className="flex flex-wrap items-end gap-4">
+        <form action={testConnection}>
+          <button
+            type="submit"
+            className="inline-flex h-9 items-center rounded-md border border-line-2 bg-paper-2 px-4 font-mono text-[11px] uppercase tracking-[0.12em] text-ink transition-colors hover:border-ink hover:bg-paper-1"
+          >
+            Test connection
+          </button>
+        </form>
+        {integration.credentialStatus === "present" ? (
+          <SyncNowButton integrationId={integration.id} />
+        ) : null}
+      </div>
     </li>
   );
 }
@@ -123,15 +144,17 @@ function renderCredential(integration: Integration): React.ReactNode {
   );
 }
 
-function StatePill({ state }: { state: Integration["state"] }) {
+function StatePill({ state }: { state: IntegrationState }) {
   const tone =
     state === "live"
       ? "border-growth/40 text-ink"
-      : state === "error"
-        ? "border-support/40 text-support"
-        : state === "stale"
-          ? "border-revenue/40 text-ink-mid"
-          : "border-line text-ink-mid";
+      : state === "syncing"
+        ? "border-revenue/40 text-ink"
+        : state === "error"
+          ? "border-support/40 text-support"
+          : state === "stale"
+            ? "border-revenue/40 text-ink-mid"
+            : "border-line text-ink-mid";
   return (
     <span
       className={`inline-flex h-6 items-center rounded-full border bg-paper-1/60 px-2.5 font-mono text-[10px] uppercase tracking-[0.12em] ${tone}`}
