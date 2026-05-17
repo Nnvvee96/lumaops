@@ -64,6 +64,7 @@ App startet ohne Login-Schirm. `.env` definiert den Operator. Cloudflare Access 
 Compaction: At 150k tokens (anecdotal), distill insights.
 2026-05-15: Product direction locked as open-source, self-hostable product operations cockpit for indie software.
 2026-05-15: Phase 1 Spec-Lock — 11 decisions captured (§1.1 above). Eight from CONCEPT §17 (operator-scope, support-surface, studio-identity, brand-assets, daily-ritual, cohort tracking, hosted pricing, connector marketplace), three TECHSTACK (Drizzle, Next.js App Router + Postgres, single-user .env auth). CONCEPT §17, TECHSTACK §2b, TDD.md updated in the same pass.
+2026-05-16: Phase 4 sync orchestrator (S4E) shape locked: pure `runSync` core function in `@lumaops/core/sync` against an injectable `SyncStore` interface (drizzle-backed in apps/web, in-memory fake in tests); per-process `inFlight: Map<id, AbortController>` for cancel propagation; client-side freshness timers + window-focus listener trigger `router.refresh()` rather than DB writes — the `stale` flip is derived at render via `effectiveState`. Means: no background worker, no server-side cron, no instrumentation hooks — laptop dashboard model. Phase B (hosted) replaces the in-process map with a per-tenant signal table.
 
 ## 3. Locked Prompts
 Visual Seed: Minimal, calm, premium operations cockpit inspired by restrained personal-site aesthetics, adapted for dense product dashboards.
