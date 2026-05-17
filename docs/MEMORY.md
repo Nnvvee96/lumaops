@@ -64,6 +64,7 @@ App startet ohne Login-Schirm. `.env` definiert den Operator. Cloudflare Access 
 Compaction: At 150k tokens (anecdotal), distill insights.
 2026-05-15: Product direction locked as open-source, self-hostable product operations cockpit for indie software.
 2026-05-15: Phase 1 Spec-Lock — 11 decisions captured (§1.1 above). Eight from CONCEPT §17 (operator-scope, support-surface, studio-identity, brand-assets, daily-ritual, cohort tracking, hosted pricing, connector marketplace), three TECHSTACK (Drizzle, Next.js App Router + Postgres, single-user .env auth). CONCEPT §17, TECHSTACK §2b, TDD.md updated in the same pass.
+2026-05-16: GitHub-surface composition rule locked. Every page that renders GitHub-derived data (S4F: /releases, /support; future: product detail panels) consumes from a single read pass through `@lumaops/core/freshness#integrationFreshness` + per-surface event aggregator in `apps/web/src/lib/github-surfaces.ts`. Integration in `error` state forces Freshness to stale (threshold=0) so the operator never sees pre-error data without a "stale" overlay. Revenue / traffic surfaces stay `missing` with explicit reason — no silent merging of GitHub signals into "total" metrics ([LL §8.4]).
 
 ## 3. Locked Prompts
 Visual Seed: Minimal, calm, premium operations cockpit inspired by restrained personal-site aesthetics, adapted for dense product dashboards.
